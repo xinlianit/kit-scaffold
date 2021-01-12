@@ -1,16 +1,16 @@
 package main
 
 import (
-	httpTransport "github.com/go-kit/kit/transport/http"
 	"github.com/gorilla/mux"
+	"github.com/xinlianit/kit-scaffold/core"
 	"github.com/xinlianit/kit-scaffold/test/endpoint"
+	"github.com/xinlianit/kit-scaffold/test/middleware"
 	"github.com/xinlianit/kit-scaffold/test/transport"
 	"log"
 	"net/http"
 )
 
 func main() {
-
 	httpHandler := NewHttpHandler()
 
 	httpServer := http.Server{
@@ -26,17 +26,20 @@ func main() {
 }
 
 func NewHttpHandler() http.Handler {
+	httpHandler := core.NewHttpHandler()
+	httpHandler.Use(middleware.TestMiddleware, middleware.Test2Middleware)
 
 	indexEndpoint := endpoint.NewIndexEndpoint()
 	indexTransport := transport.NewIndexTransport()
-	indexHandler := httpTransport.NewServer(indexEndpoint.Hello(), indexTransport.HelloDecode(), indexTransport.HelloEncode())
+	helloHandler := httpHandler.Server(indexEndpoint.Hello, indexTransport.HelloDecode, indexTransport.HelloEncode)
+	testHandler := httpHandler.Server(indexEndpoint.Test, indexTransport.HelloDecode, indexTransport.HelloEncode)
 
 	route := mux.NewRouter()
 
 	//route.Use() // 中间件
 
-
-	route.Methods(http.MethodGet).Path("/index/hello").Handler(indexHandler)
+	route.Methods(http.MethodGet).Path("/index/hello").Handler(helloHandler)
+	route.Methods(http.MethodGet).Path("/index/test").Handler(testHandler)
 
 	return route
 }
