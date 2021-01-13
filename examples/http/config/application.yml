@@ -1,0 +1,29 @@
+# 应用配置
+app:
+  # 应用ID
+  id: kit-scaffold.palm.http.api
+  # 应用名称
+  name: Go-kit 脚手架 - http示例
+
+  # 配置中心
+  configCenter:
+    # 是否启用配置中心; true-启用、false-关闭
+    enable: true
+    # 配置中心类型; nacos
+    type: nacos
+    # 同步配置文件列表
+    syncConfigDataIds: application.yml,datasource.yml,mail.yml
+    # 动态配置缓存目录
+    configCacheDir: runtime/cache/config
+
+  # 服务中心
+  serviceCenter:
+    # 服务中心类型: etcd、consul、nacos
+    type: etcd
+    # 服务中心地址, 多个用英文逗号","隔开
+    address: 39.100.153.72:2379
+    #address: 39.100.153.72:8848
+    # 服务注册
+    register:
+      # 是否注册服务; true-是、false-否
+      enable: true

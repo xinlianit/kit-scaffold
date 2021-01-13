@@ -1,0 +1,48 @@
+# nacos 配置
+nacos:
+  # 客户端配置
+  clientConfig:
+    # 命名空间ID
+    namespaceId: c296c59f-cb8f-4c69-8d8b-a6b830f203b0
+    # 请求Nacos服务端超时时间; 默认:10000 ms
+    timeout: 5000
+    # 获取Nacos服务列表endpoint地址
+    endpoint:
+    # kms的regionId，用于配置中心的鉴权
+    regionId:
+    # kms的AccessKey，用于配置中心的鉴权
+    accessKey:
+    # kms的SecretKey，用于配置中心的鉴权
+    secretKey:
+    # 是否开启kms，默认不开启，kms可以参考文档 https://help.aliyun.com/product/28933.html
+    openKms: false
+    # 缓存service信息目录，默认是当前运行目录
+    cacheDir: /home/nacos/data/cache
+    # 监听service变化并发数; 默认: 20
+    updateThreadNum: 20
+    # 在启动的时候不读取缓存在 CacheDir 的 service 信息
+    notLoadCacheAtStart: true
+    # 当service返回的实例列表为空时，不更新缓存，用于推空保护
+    updateCacheWhenEmpty: true
+    # Nacos服务端的API鉴权Username
+    userName:
+    # Nacos服务端的API鉴权Password
+    password:
+    # 日志存储路径
+    logDir: /home/nacos/logs
+    # 日志轮转周期; 比如：30m, 1h, 24h, 默认: 24h
+    rotateTime: 24h
+    # 日志最大文件数，默认: 3
+    maxAge: 3
+    # 日志默认级别; 值必须是: debug,info,warn,error，默认值: info
+    logLevel: info
+
+  # 服务端配置
+  serverConfig:
+    - scheme:
+      # Nacos ContextPath
+      contextPath:
+      # Nacos服务地址
+      ipAddr: 39.100.153.72
+      # Nacos服务端口
+      port: 8848

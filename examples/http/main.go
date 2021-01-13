@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gorilla/mux"
 	scaffold "github.com/xinlianit/kit-scaffold"
+	"github.com/xinlianit/kit-scaffold/config"
 	"github.com/xinlianit/kit-scaffold/examples/http/endpoint"
 	"github.com/xinlianit/kit-scaffold/examples/http/middleware"
 	"github.com/xinlianit/kit-scaffold/examples/http/transport"
@@ -12,8 +14,11 @@ import (
 func main() {
 	httpHandler := NewHttpHandler()
 
+	// 服务地址
+	serverAddress := fmt.Sprintf("%s:%d", config.Config().GetString("server.host"), config.Config().GetInt("server.port"))
+
 	// 运行服务
-	scaffold.RunHttpServer(":8080", httpHandler)
+	scaffold.RunHttpServer(serverAddress, httpHandler)
 }
 
 func NewHttpHandler() http.Handler {

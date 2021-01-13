@@ -160,3 +160,111 @@ func Config() *viper.Viper {
 func DynamicConfig() *viper.Viper {
 	return dynamicConfig
 }
+
+func GetOrDefault(key string, defaultValue interface{}) interface{} {
+	value := config.Get(key)
+	if value == nil {
+		value = defaultValue
+	}
+
+	return value
+}
+
+func GetIntOrDefault(key string, defaultValue int) int {
+	value := config.GetInt(key)
+	if value == 0 {
+		value = defaultValue
+	}
+
+	return value
+}
+
+func GetInt32OrDefault(key string, defaultValue int32) int32 {
+	value := config.GetInt32(key)
+	if value == 0 {
+		value = defaultValue
+	}
+
+	return value
+}
+
+func GetInt64OrDefault(key string, defaultValue int64) int64 {
+	value := config.GetInt64(key)
+	if value == 0 {
+		value = defaultValue
+	}
+
+	return value
+}
+
+func GetUintOrDefault(key string, defaultValue uint) uint {
+	value := config.GetUint(key)
+	if value == 0 {
+		value = defaultValue
+	}
+
+	return value
+}
+
+func GetUint32OrDefault(key string, defaultValue uint32) uint32 {
+	value := config.GetUint32(key)
+	if value == 0 {
+		value = defaultValue
+	}
+
+	return value
+}
+
+func GetUint64OrDefault(key string, defaultValue uint64) uint64 {
+	value := config.GetUint64(key)
+	if value == 0 {
+		value = defaultValue
+	}
+
+	return value
+}
+
+func GetFloat64OrDefault(key string, defaultValue float64) float64 {
+	value := config.GetFloat64(key)
+	if value == 0 {
+		value = defaultValue
+	}
+
+	return value
+}
+
+func GetStringOrDefault(key string, defaultValue string) string {
+	value := config.GetString(key)
+	if value == "" {
+		value = defaultValue
+	}
+
+	return value
+}
+
+func GetBoolOrDefault(key string, defaultValue bool) bool {
+	value := config.GetBool(key)
+	if value == false {
+		value = defaultValue
+	}
+
+	return value
+}
+
+func GetIntSliceOrDefault(key string, defaultValue []int) []int {
+	value := config.GetIntSlice(key)
+	if len(value) == 0 {
+		value = defaultValue
+	}
+
+	return value
+}
+
+func GetStringSliceOrDefault(key string, defaultValue []string) []string {
+	value := config.GetStringSlice(key)
+	if len(value) == 0 {
+		value = defaultValue
+	}
+
+	return value
+}

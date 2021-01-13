@@ -26,23 +26,47 @@ type ZapConfig struct {
 	ErrorLogFile     string
 	LowestLevel      zapcore.Level
 	RecordLineNumber bool
+	LogFormatter     string
 }
 
 // 默认配置
 func NewDefaultZapConfig() ZapConfig {
-	// todo 读取yml配置
+	// 日志切割类型
+	rotateType := util.RotateTypeDate
+	if config.Config().GetString("logger.rotate.type") == "size" {
+		rotateType = util.RotateTypeSize
+	}
+
+	// 最低日志级别
+	lowestLevel := zapcore.DebugLevel
+	switch config.Config().GetString("logger.lowestLevel") {
+	case "info":
+		lowestLevel = zapcore.InfoLevel
+	case "warn":
+		lowestLevel = zapcore.WarnLevel
+	case "error":
+		lowestLevel = zapcore.ErrorLevel
+	case "panic":
+		lowestLevel = zapcore.PanicLevel
+	case "fatal":
+		lowestLevel = zapcore.FatalLevel
+	default:
+		lowestLevel = zapcore.DebugLevel
+	}
+
 	return ZapConfig{
-		RotateEnable:     true,
-		RotateType:       util.RotateTypeDate,
-		MaxSize:          10,
-		MaxBackups:       100,
-		MaxAge:           30,
-		Compress:         true,
-		Extend:           ".%Y%m%d",
-		LogFile:          config.Config().GetString("app.log.runtimeLogFile"),
-		ErrorLogFile:     config.Config().GetString("app.log.errorLogFile"),
-		LowestLevel:      zapcore.DebugLevel,
-		RecordLineNumber: true,
+		RotateEnable:     config.Config().GetBool("logger.rotate.enable"),
+		RotateType:       rotateType,
+		MaxSize:          config.Config().GetInt("logger.rotate.size.maxSize"),
+		MaxBackups:       config.Config().GetInt("logger.rotate.size.maxBackups"),
+		Compress:         config.Config().GetBool("logger.rotate.size.compress"),
+		Extend:           config.Config().GetString("logger.rotate.date.extend"),
+		MaxAge:           config.Config().GetInt("logger.maxAge"),
+		LogFile:          config.Config().GetString("logger.runtimeLogFile"),
+		ErrorLogFile:     config.Config().GetString("logger.errorLogFile"),
+		LowestLevel:      lowestLevel,
+		RecordLineNumber: config.Config().GetBool("logger.recordLineNumber"),
+		LogFormatter:     config.Config().GetString("logger.logFormatter"),
 	}
 }
 
@@ -50,9 +74,6 @@ func NewDefaultZapConfig() ZapConfig {
 // @param cfg 初始化配置
 // @param baseFields 日志基础字段
 func ZapInit(cfg ZapConfig, baseFields []zap.Field) *zap.Logger {
-	// 编码器配置
-	encoderConfig := util.ZapUtil().NewDefaultEncoderConfig()
-
 	// 大小切割配置
 	rotateSizeConfig := util.ZapUtil().NewDefaultRotateSizeConfig()
 	rotateSizeConfig.MaxSize = cfg.MaxSize       // 在进行切割之前，日志文件的最大大小（以MB为单位)
@@ -74,8 +95,16 @@ func ZapInit(cfg ZapConfig, baseFields []zap.Field) *zap.Logger {
 	zapUtilConfig.LogFile = cfg.LogFile
 	// 错误日志文件
 	zapUtilConfig.ErrorLogFile = cfg.ErrorLogFile
+	// 编码器配置
+	encoderConfig := util.ZapUtil().NewDefaultEncoderConfig()
 	// 日志格式
-	zapUtilConfig.LogFormatter = zapcore.NewJSONEncoder(encoderConfig)
+	if cfg.LogFormatter == "text" {
+		// 文本编码
+		zapUtilConfig.LogFormatter = zapcore.NewConsoleEncoder(encoderConfig)
+	} else {
+		// JSON编码
+		zapUtilConfig.LogFormatter = zapcore.NewJSONEncoder(encoderConfig)
+	}
 	// 最低记录日志级别
 	zapUtilConfig.LowestLevel = cfg.LowestLevel
 	// 是否记录行号
