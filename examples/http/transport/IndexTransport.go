@@ -3,7 +3,7 @@ package transport
 import (
 	"context"
 	"encoding/json"
-	req "github.com/xinlianit/kit-scaffold/test/repository/request"
+	req "github.com/xinlianit/kit-scaffold/examples/http/repository/request"
 	"net/http"
 )
 

@@ -2,8 +2,8 @@ package config
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/xinlianit/kit-scaffold/app/common"
-	"github.com/xinlianit/kit-scaffold/app/common/constant"
+	"github.com/xinlianit/kit-scaffold/common"
+	"github.com/xinlianit/kit-scaffold/common/constant"
 	"path/filepath"
 	"strings"
 )

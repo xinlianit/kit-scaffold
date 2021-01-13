@@ -2,10 +2,11 @@ package endpoint
 
 import (
 	"context"
-	req "github.com/xinlianit/kit-scaffold/test/repository/request"
-	rsp "github.com/xinlianit/kit-scaffold/test/repository/response"
-	"github.com/xinlianit/kit-scaffold/test/service"
+	req "github.com/xinlianit/kit-scaffold/examples/http/repository/request"
+	rsp "github.com/xinlianit/kit-scaffold/examples/http/repository/response"
+	"github.com/xinlianit/kit-scaffold/examples/http/service"
 	"log"
+	"time"
 )
 
 type IndexEndpoint struct {
@@ -40,6 +41,8 @@ func (e IndexEndpoint) Test(ctx context.Context, request interface{}) (response 
 	response = rsp.HelloResponse{
 		Data: helloEntity,
 	}
+
+	time.Sleep(time.Second * 3)
 
 	return response, nil
 }

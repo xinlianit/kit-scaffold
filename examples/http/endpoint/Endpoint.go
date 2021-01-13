@@ -1,6 +1,6 @@
 package endpoint
 
-import "github.com/xinlianit/kit-scaffold/test/service"
+import "github.com/xinlianit/kit-scaffold/examples/http/service"
 
 func NewIndexEndpoint() IndexEndpoint {
 	return IndexEndpoint{

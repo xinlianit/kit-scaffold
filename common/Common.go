@@ -1,6 +1,7 @@
 package common
 
 import (
+	"github.com/google/uuid"
 	"os"
 	"path/filepath"
 )
@@ -44,4 +45,10 @@ func GetRuntimePath() string {
 // 获取缓存路径
 func GetCachePath() string {
 	return filepath.Join(GetRuntimePath(), "cache")
+}
+
+// 生成UUID
+func GenerateUUID() string {
+	id, _ := uuid.NewRandom()
+	return id.String()
 }

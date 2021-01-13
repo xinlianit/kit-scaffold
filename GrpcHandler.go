@@ -1,9 +1,9 @@
-package core
+package scaffold
 
 import (
 	"github.com/go-kit/kit/endpoint"
 	grpcTransport "github.com/go-kit/kit/transport/grpc"
-	"github.com/xinlianit/kit-scaffold/app/middleware"
+	"github.com/xinlianit/kit-scaffold/middleware"
 )
 
 type GrpcHandler struct {
@@ -28,9 +28,14 @@ func (h GrpcHandler) Server(e endpoint.Endpoint, dec grpcTransport.DecodeRequest
 	h.middlewares = append(h.middlewares, middleware.LoggerMiddleware)
 
 	// 业务中间件
-	for _, middleware := range h.middlewares {
-		e = middleware(e)
+	if h.middlewares != nil && len(h.middlewares) > 0 {
+		for _, middleware := range h.middlewares {
+			e = middleware(e)
+		}
 	}
+
+	// 日志中间件
+	e = middleware.LoggerMiddleware(e)
 
 	server := grpcTransport.NewServer(e, dec, enc, h.options...)
 

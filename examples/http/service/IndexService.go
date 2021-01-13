@@ -1,6 +1,6 @@
 package service
 
-import "github.com/xinlianit/kit-scaffold/test/repository/entity"
+import "github.com/xinlianit/kit-scaffold/examples/http/repository/entity"
 
 type IndexService struct {
 }

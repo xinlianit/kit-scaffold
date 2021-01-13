@@ -1,9 +1,9 @@
-package core
+package scaffold
 
 import (
 	"github.com/go-kit/kit/endpoint"
 	httpTransport "github.com/go-kit/kit/transport/http"
-	"github.com/xinlianit/kit-scaffold/app/middleware"
+	"github.com/xinlianit/kit-scaffold/middleware"
 )
 
 type HttpHandler struct {
@@ -24,13 +24,15 @@ func (h *HttpHandler) Use(middlewares ...endpoint.Middleware) *HttpHandler {
 }
 
 func (h HttpHandler) Server(e endpoint.Endpoint, dec httpTransport.DecodeRequestFunc, enc httpTransport.EncodeResponseFunc) *httpTransport.Server {
-	// 日志中间件
-	h.middlewares = append(h.middlewares, middleware.LoggerMiddleware)
-
 	// 业务中间件
-	for _, middleware := range h.middlewares {
-		e = middleware(e)
+	if h.middlewares != nil && len(h.middlewares) > 0 {
+		for _, middleware := range h.middlewares {
+			e = middleware(e)
+		}
 	}
+
+	// 日志中间件
+	e = middleware.LoggerMiddleware(e)
 
 	server := httpTransport.NewServer(e, dec, enc, h.options...)
 

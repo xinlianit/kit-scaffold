@@ -4,7 +4,7 @@ import (
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 	"github.com/sirupsen/logrus"
 	"github.com/xinlianit/go-util/util"
-	"github.com/xinlianit/kit-scaffold/app/config"
+	"github.com/xinlianit/kit-scaffold/config"
 	"time"
 )
 

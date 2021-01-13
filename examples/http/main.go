@@ -2,31 +2,22 @@ package main
 
 import (
 	"github.com/gorilla/mux"
-	"github.com/xinlianit/kit-scaffold/core"
-	"github.com/xinlianit/kit-scaffold/test/endpoint"
-	"github.com/xinlianit/kit-scaffold/test/middleware"
-	"github.com/xinlianit/kit-scaffold/test/transport"
-	"log"
+	scaffold "github.com/xinlianit/kit-scaffold"
+	"github.com/xinlianit/kit-scaffold/examples/http/endpoint"
+	"github.com/xinlianit/kit-scaffold/examples/http/middleware"
+	"github.com/xinlianit/kit-scaffold/examples/http/transport"
 	"net/http"
 )
 
 func main() {
 	httpHandler := NewHttpHandler()
 
-	httpServer := http.Server{
-		Addr:    ":8080",
-		Handler: httpHandler,
-	}
-
-	log.Println("test server address: 8080")
-
-	if err := httpServer.ListenAndServe(); err != nil {
-		panic(err)
-	}
+	// 运行服务
+	scaffold.RunHttpServer(":8080", httpHandler)
 }
 
 func NewHttpHandler() http.Handler {
-	httpHandler := core.NewHttpHandler()
+	httpHandler := scaffold.NewHttpHandler()
 	httpHandler.Use(middleware.TestMiddleware, middleware.Test2Middleware)
 
 	indexEndpoint := endpoint.NewIndexEndpoint()
@@ -35,8 +26,6 @@ func NewHttpHandler() http.Handler {
 	testHandler := httpHandler.Server(indexEndpoint.Test, indexTransport.HelloDecode, indexTransport.HelloEncode)
 
 	route := mux.NewRouter()
-
-	//route.Use() // 中间件
 
 	route.Methods(http.MethodGet).Path("/index/hello").Handler(helloHandler)
 	route.Methods(http.MethodGet).Path("/index/test").Handler(testHandler)

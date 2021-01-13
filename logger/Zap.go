@@ -3,7 +3,7 @@ package logger
 import (
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 	"github.com/xinlianit/go-util/util"
-	"github.com/xinlianit/kit-scaffold/app/config"
+	"github.com/xinlianit/kit-scaffold/config"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"time"
