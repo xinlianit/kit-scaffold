@@ -3,9 +3,9 @@ logger:
   # 最低记录日志级别; debug、info、warn、error、panic、fatal（级别从低到高）
   lowestLevel: debug
   # 是否记录行号; true-是、false-否
-  recordLineNumber: true
+  recordLineNumber: false
   # 日志格式; text-文本格式、json-JSON格式
-  logFormatter: json
+  logFormatter: text
   # 应用运行日志文件
   runtimeLogFile:  logs/kit-scaffold.palm.http.api-runtime.log
   # 错误日志文件

@@ -6,7 +6,6 @@ import (
 	"github.com/xinlianit/kit-scaffold/config"
 	"github.com/xinlianit/kit-scaffold/logger"
 	"go.uber.org/zap"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -32,10 +31,11 @@ func RunHttpServer(address string, handler http.Handler) {
 	}
 
 	// 服务启动成功
-	fmt.Println("Listening and serving HTTP on " + address + ", PID: " + fmt.Sprintf("%d", os.Getpid()))
+	logger.ZapLogger.Info(fmt.Sprintf("Listening and serving HTTP on %s, PID: %d", address, os.Getpid()))
 
 	go func() {
 		if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			logger.ZapLogger.Error("server run error: " + err.Error())
 			panic("server run error: " + err.Error())
 		}
 	}()
@@ -44,8 +44,8 @@ func RunHttpServer(address string, handler http.Handler) {
 	signalChan := make(chan os.Signal)
 	signal.Notify(signalChan, os.Interrupt) // 指定中断信号(Interrupt)转发到 signalChan
 	sig := <-signalChan
-	log.Println("Get Signal:", sig)
-	log.Println("Shutdown Server ...")
+	logger.ZapLogger.Info(fmt.Sprintf("Get Signal: %d", sig))
+	logger.ZapLogger.Info("Shutdown Server ...")
 
 	// 3 秒超时自动取消(当执行一个go 协程时，超时自动取消协程)
 	contextTimeout := config.Config().GetInt("server.contextTimeout")
@@ -53,9 +53,9 @@ func RunHttpServer(address string, handler http.Handler) {
 	defer cancelFunc()
 
 	if err := httpServer.Shutdown(ctx); err != nil {
-		log.Fatal("Server Shutdown:", err)
+		logger.ZapLogger.Fatal(fmt.Sprintf("Server Shutdown: %v", err))
 	}
-	log.Println("Server exiting")
+	logger.ZapLogger.Info("Server exiting")
 }
 
 // 创建 Http 处理器
