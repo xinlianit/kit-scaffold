@@ -3,6 +3,7 @@ package scaffold
 import (
 	"context"
 	"fmt"
+	"github.com/spf13/pflag"
 	"github.com/xinlianit/kit-scaffold/config"
 	"github.com/xinlianit/kit-scaffold/logger"
 	"go.uber.org/zap"
@@ -21,8 +22,23 @@ func init() {
 	logger.ZapLogger = logger.ZapInit(logger.NewDefaultZapConfig(), baseFields)
 }
 
+// 命令行解析
+func commandLineParse() {
+	// 解析命令行参数
+	pflag.String("server.host", "0.0.0.0", "服务地址")
+	pflag.Int("server.port", 80, "服务端口")
+	pflag.Parse()
+	config.Config().BindPFlags(pflag.CommandLine)
+}
+
 // 运行 Http 服务
-func RunHttpServer(address string, handler http.Handler) {
+func RunHttpServer(handler http.Handler) {
+	// 解析命令行参数
+	commandLineParse()
+
+	// 服务地址
+	address := fmt.Sprintf("%s:%d", config.Config().GetString("server.host"), config.Config().GetInt("server.port"))
+
 	httpServer := &http.Server{
 		Addr:         address,
 		Handler:      handler,
