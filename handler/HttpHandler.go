@@ -32,11 +32,10 @@ func (h HttpHandler) Server(e endpoint.Endpoint, dec httpTransport.DecodeRequest
 		}
 	}
 
+	// 请求中间件
+	e = middleware.RequestMiddleware(e)
 	// 日志中间件
 	e = middleware.LoggerMiddleware(e)
 
-	// 请求编码
-	server := httpTransport.NewServer(e, dec, common.Transport().ResponseEncode, h.options...)
-
-	return server
+	return httpTransport.NewServer(e, common.RequestDecode(dec), common.ResponseEncode, h.options...)
 }

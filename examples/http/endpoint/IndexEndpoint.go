@@ -14,7 +14,6 @@ type IndexEndpoint struct {
 }
 
 func (e IndexEndpoint) Hello(ctx context.Context, request interface{}) (response interface{}, err error) {
-	log.Println("======= hello")
 	// 请求断言
 	helloReq := request.(req.HelloRequest)
 
