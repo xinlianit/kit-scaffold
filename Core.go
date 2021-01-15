@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/spf13/pflag"
 	"github.com/xinlianit/kit-scaffold/config"
+	"github.com/xinlianit/kit-scaffold/handler"
 	"github.com/xinlianit/kit-scaffold/logger"
 	"go.uber.org/zap"
 	"net/http"
@@ -75,6 +76,6 @@ func RunHttpServer(handler http.Handler) {
 }
 
 // 创建 Http 处理器
-func NewHttpHandler() *HttpHandler {
-	return &HttpHandler{}
+func NewHttpHandler() *handler.HttpHandler {
+	return &handler.HttpHandler{}
 }

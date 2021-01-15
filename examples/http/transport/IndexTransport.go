@@ -2,7 +2,6 @@ package transport
 
 import (
 	"context"
-	"encoding/json"
 	req "github.com/xinlianit/kit-scaffold/examples/http/repository/request"
 	"net/http"
 )
@@ -16,10 +15,4 @@ func (t IndexTransport) HelloDecode(ctx context.Context, request *http.Request) 
 	}
 
 	return helloReq, nil
-}
-
-func (t IndexTransport) HelloEncode(ctx context.Context, w http.ResponseWriter, response interface{}) error {
-	w.Header().Set("Content-Type", "application/json;charset=utf-8")
-
-	return json.NewEncoder(w).Encode(response)
 }

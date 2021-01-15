@@ -1,4 +1,4 @@
-package scaffold
+package handler
 
 import (
 	"github.com/go-kit/kit/endpoint"

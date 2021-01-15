@@ -1,4 +1,4 @@
-package scaffold
+package common
 
 import "github.com/xinlianit/kit-scaffold/model"
 

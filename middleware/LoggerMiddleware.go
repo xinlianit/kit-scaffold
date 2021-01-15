@@ -2,10 +2,9 @@ package middleware
 
 import (
 	"context"
-	"fmt"
 	"github.com/go-kit/kit/endpoint"
 	"github.com/xinlianit/go-util/util"
-	scaffold "github.com/xinlianit/kit-scaffold"
+	"github.com/xinlianit/kit-scaffold/common"
 	"github.com/xinlianit/kit-scaffold/config"
 	"github.com/xinlianit/kit-scaffold/logger"
 	"go.uber.org/zap"
@@ -72,7 +71,7 @@ func LoggerMiddleware(next endpoint.Endpoint) endpoint.Endpoint {
 
 	return func(ctx context.Context, req interface{}) (rsp interface{}, err error) {
 		// 请求对象
-		request := scaffold.Request(ctx)
+		request := common.Request(ctx)
 
 		// 请求体
 		reqBody, err := util.SerializeUtil().JsonEncode(req)
@@ -127,8 +126,6 @@ func receiveAndRecordLog() {
 	accessLogger := logger.NewLoggerOfZap(accessLogFile, zapConfig, baseFields)
 
 	for log := range logChannel {
-		fmt.Println(log.RequestId)
-
 		// 日志字段
 		fields := []zap.Field{
 			zap.String(logFields.RequestId, log.RequestId),

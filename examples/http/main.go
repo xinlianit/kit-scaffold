@@ -6,6 +6,7 @@ import (
 	"github.com/xinlianit/kit-scaffold/examples/http/endpoint"
 	"github.com/xinlianit/kit-scaffold/examples/http/middleware"
 	"github.com/xinlianit/kit-scaffold/examples/http/transport"
+	scaffoldTransport "github.com/xinlianit/kit-scaffold/transport"
 	"net/http"
 )
 
@@ -22,8 +23,8 @@ func NewHttpHandler() http.Handler {
 
 	indexEndpoint := endpoint.NewIndexEndpoint()
 	indexTransport := transport.NewIndexTransport()
-	helloHandler := httpHandler.Server(indexEndpoint.Hello, indexTransport.HelloDecode, indexTransport.HelloEncode)
-	testHandler := httpHandler.Server(indexEndpoint.Test, indexTransport.HelloDecode, indexTransport.HelloEncode)
+	helloHandler := httpHandler.Server(indexEndpoint.Hello, indexTransport.HelloDecode, scaffoldTransport.Transport().ResponseEncode)
+	testHandler := httpHandler.Server(indexEndpoint.Test, indexTransport.HelloDecode, scaffoldTransport.Transport().ResponseEncode)
 
 	route := mux.NewRouter()
 
