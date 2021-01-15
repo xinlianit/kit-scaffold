@@ -1,7 +1,7 @@
 package response
 
 type HelloResponse struct {
-	Code int32	`json:"code"`
-	Msg  string `json:"msg"`
-	Data interface{} `json:"data"`
+	Id   int64  `json:"id"`
+	Name string `json:"name"`
+	Desc string `json:"desc"`
 }

@@ -2,8 +2,10 @@ package common
 
 import "github.com/xinlianit/kit-scaffold/model"
 
-func Response() response {
-	return response{}
+var Response response
+
+func init() {
+	Response = response{}
 }
 
 // 响应
@@ -16,11 +18,11 @@ func (r response) Success(data interface{}) model.Response {
 }
 
 // 失败
-func Fail(msg string) model.Response {
+func (r response) Fail(msg string) model.Response {
 	return model.Response{Code: 1, Msg: msg}
 }
 
 // 错误
-func Error(code int, msg string) model.Response {
+func (r response) Error(code int, msg string) model.Response {
 	return model.Response{Code: code, Msg: msg}
 }

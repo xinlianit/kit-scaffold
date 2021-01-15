@@ -40,7 +40,7 @@ func RequestDecode(dec httpTransport.DecodeRequestFunc) httpTransport.DecodeRequ
 // 响应编码
 func ResponseEncode(ctx context.Context, w http.ResponseWriter, rsp interface{}) error {
 	w.Header().Set("Content-Type", "application/json;charset=utf-8")
-	content, _ := util.SerializeUtil().JsonEncode(rsp)
+	content, _ := util.SerializeUtil().JsonEncode(Response.Success(rsp))
 	if _, err := w.Write([]byte(content)); err != nil {
 		return err
 	}
