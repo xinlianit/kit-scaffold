@@ -1,10 +1,9 @@
-package transport
+package common
 
 import (
 	"context"
 	httpTransport "github.com/go-kit/kit/transport/http"
 	"github.com/xinlianit/go-util/util"
-	"github.com/xinlianit/kit-scaffold/common"
 	"github.com/xinlianit/kit-scaffold/model"
 	"log"
 	"net/http"
@@ -20,7 +19,7 @@ type transport struct {
 // 请求解码
 func (t transport) RequestDecode(data interface{}) httpTransport.DecodeRequestFunc {
 	return func(ctx context.Context, req *http.Request) (interface{}, error) {
-		request := common.Request(ctx)
+		request := Request(ctx)
 
 		requestBody := model.Request{
 			RequestId:      request.GetRequestId(),
@@ -37,7 +36,7 @@ func (t transport) RequestDecode(data interface{}) httpTransport.DecodeRequestFu
 
 // 响应编码
 func (t transport) ResponseEncode(ctx context.Context, w http.ResponseWriter, rsp interface{}) error {
-	response := common.Response()
+	response := Response()
 
 	w.Header().Set("Content-Type", "application/json;charset=utf-8")
 	content, _ := util.SerializeUtil().JsonEncode(response.Success(rsp))
