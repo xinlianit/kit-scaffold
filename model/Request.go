@@ -4,7 +4,7 @@ type Request struct {
 	RequestId      string      `json:"request_id"`
 	RequestReferer string      `json:"request_referer"`
 	RequestTime    string      `json:"request_time"`
-	Data           interface{} `json:"data"`
+	RequestBody    interface{} `json:"request_body"`
 }
 
 func (r Request) GetRequestId() string {
@@ -19,6 +19,6 @@ func (r Request) GetRequestTime() string {
 	return r.RequestTime
 }
 
-func (r Request) GetData() interface{} {
-	return r.Data
+func (r Request) GetRequestBody() interface{} {
+	return r.RequestBody
 }

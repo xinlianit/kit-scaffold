@@ -2,9 +2,11 @@ package endpoint
 
 import (
 	"context"
+	"fmt"
 	req "github.com/xinlianit/kit-scaffold/examples/http/repository/request"
 	rsp "github.com/xinlianit/kit-scaffold/examples/http/repository/response"
 	"github.com/xinlianit/kit-scaffold/examples/http/service"
+	"github.com/xinlianit/kit-scaffold/server"
 	"log"
 	"time"
 )
@@ -14,6 +16,10 @@ type IndexEndpoint struct {
 }
 
 func (e IndexEndpoint) Hello(ctx context.Context, request interface{}) (response interface{}, err error) {
+
+	fmt.Println(fmt.Sprintf("============requestObject: %#v", server.Request))
+	fmt.Println("===========", server.Request.GetRequestId())
+
 	// 请求断言
 	helloReq := request.(req.HelloRequest)
 

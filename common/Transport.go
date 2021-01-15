@@ -19,11 +19,18 @@ func RequestDecode(dec httpTransport.DecodeRequestFunc) httpTransport.DecodeRequ
 
 		request := Request(ctx)
 
+		//return &model.Request{
+		//	RequestId:      request.GetRequestId(),
+		//	RequestReferer: request.GetRequestReferer(),
+		//	RequestTime:    util.TimeUtil().GetCurrentDateTime("2006-01-02 15:04:05"),
+		//	RequestBody:    requestData,
+		//}, nil
+
 		requestBody := model.Request{
 			RequestId:      request.GetRequestId(),
 			RequestReferer: request.GetRequestReferer(),
 			RequestTime:    util.TimeUtil().GetCurrentDateTime("2006-01-02 15:04:05"),
-			Data:           requestData,
+			RequestBody:    requestData,
 		}
 
 		return requestBody, nil
