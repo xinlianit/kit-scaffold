@@ -13,4 +13,5 @@ require (
 	github.com/spf13/viper v1.7.1
 	github.com/xinlianit/go-util v1.0.0-2020121601
 	go.uber.org/zap v1.16.0
+	google.golang.org/grpc v1.26.0
 )
