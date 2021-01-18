@@ -4,9 +4,9 @@ server:
   host: 0.0.0.0
   # 服务端口
   port: 8080
-  # 读超时时间(单位：毫秒)
-  readTimeout: 1000
-  # 写超时时间(单位：毫秒)
-  writeTimeout: 1000
-  # 上下文超时时间(单位：毫秒)
-  contextTimeout: 5000
+  # gRPC
+  grpc:
+    # 反射
+    reflection:
+      # 是否在gRPC服务中注册reflection服务; true-启用、false-禁用
+      register: true

@@ -7,9 +7,9 @@ logger:
   # 日志格式; text-文本格式、json-JSON格式
   logFormatter: text
   # 应用运行日志文件
-  runtimeLogFile:  logs/kit-scaffold.palm.http.api-runtime.log
+  runtimeLogFile:  logs/kit-scaffold.palm.grpc.api-runtime.log
   # 错误日志文件
-  errorLogFile: logs/kit-scaffold.palm.http.api-error.log
+  errorLogFile: logs/kit-scaffold.palm.grpc.api-error.log
   # 保留旧文件的最大天数
   maxAge: 30
 
@@ -37,11 +37,11 @@ logger:
     # 访问日志记录：true-开启、false-关闭
     enable: true
     # 访问日志文件
-    logFile: logs/kit-scaffold.palm.http.api-access.log
+    logFile: logs/kit-scaffold.palm.grpc.api-access.log
 
   # RPC日志
   rpc:
     # RPC日志记录：true-开启、false-关闭
     enable: true
     # RPC日志文件
-    rpcLogFile: logs/kit-scaffold.palm.http.api-rpc.log
+    rpcLogFile: logs/kit-scaffold.palm.grpc.api-rpc.log

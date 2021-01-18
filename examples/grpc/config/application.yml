@@ -1,7 +1,7 @@
 # 应用配置
 app:
   # 应用ID
-  id: kit-scaffold.palm.http.api
+  id: kit-scaffold.palm.grpc.api
   # 应用名称
   name: Go-kit 脚手架 - http示例
 

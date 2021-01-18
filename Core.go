@@ -81,14 +81,11 @@ func RunRpcServer(server *grpc.Server) {
 	// 服务地址
 	address := fmt.Sprintf("%s:%d", config.Config().GetString("server.host"), config.Config().GetInt("server.port"))
 
-	// 创建 RPC 服务
-	rpcServer := grpc.NewServer()
-
-	// 注册服务
-	//register(rpcServer)
-
-	// Register reflection service on gRPC server.
-	reflection.Register(rpcServer)
+	// 是否在gRPC服务中注册reflection服务, 开启后支持grpcurl命令行工具
+	if config.Config().GetBool("server.grpc.reflection.register") {
+		// Register reflection service on gRPC server.
+		reflection.Register(server)
+	}
 
 	// 监听端口
 	lis, err := net.Listen("tcp", address)
@@ -104,7 +101,7 @@ func RunRpcServer(server *grpc.Server) {
 		// todo 服务注册
 
 		// 启动服务
-		if err := rpcServer.Serve(lis); err != nil {
+		if err := server.Serve(lis); err != nil {
 			logger.ZapLogger.Sugar().Errorf("Server run error: %v", err)
 
 			// todo 注销服务
@@ -113,7 +110,7 @@ func RunRpcServer(server *grpc.Server) {
 		}
 	}()
 
-	gRpcServerGraceStop(rpcServer)
+	gRpcServerGraceStop(server)
 }
 
 // 运行RPC代理服务
@@ -193,6 +190,7 @@ func gRpcServerGraceStop(server *grpc.Server) {
 	// signal.Notify把收到的 syscall.SIGINT或syscall.SIGTERM 信号转发给quit
 	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM) // 信号转发到 signalChan
 	sig := <-signalChan                                        // 阻塞等待接收上述两种信号时，往下执行服务关机
+
 	logger.ZapLogger.Sugar().Infof("Get Signal: %d", sig)
 	logger.ZapLogger.Info("Shutdown Server ...")
 
