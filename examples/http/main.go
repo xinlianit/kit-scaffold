@@ -8,6 +8,7 @@ import (
 	"github.com/xinlianit/kit-scaffold/examples/http/endpoint"
 	"github.com/xinlianit/kit-scaffold/examples/http/middleware"
 	"github.com/xinlianit/kit-scaffold/examples/http/transport"
+	"github.com/xinlianit/kit-scaffold/handler"
 	"net/http"
 )
 
@@ -30,7 +31,7 @@ func commandLineParse() {
 }
 
 func NewHttpHandler() http.Handler {
-	httpHandler := scaffold.NewHttpHandler()
+	httpHandler := handler.NewHttpHandler()
 	httpHandler.Use(middleware.TestMiddleware, middleware.Test2Middleware)
 
 	indexEndpoint := endpoint.NewIndexEndpoint()

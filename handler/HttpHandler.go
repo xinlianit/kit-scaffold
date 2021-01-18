@@ -7,6 +7,12 @@ import (
 	"github.com/xinlianit/kit-scaffold/middleware"
 )
 
+// 创建 Http 处理器
+func NewHttpHandler() *HttpHandler {
+	return &HttpHandler{}
+}
+
+// http 处理器
 type HttpHandler struct {
 	options     []httpTransport.ServerOption
 	middlewares []endpoint.Middleware

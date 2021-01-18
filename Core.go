@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/xinlianit/kit-scaffold/config"
-	"github.com/xinlianit/kit-scaffold/handler"
 	"github.com/xinlianit/kit-scaffold/logger"
 	"github.com/xinlianit/kit-scaffold/server"
 	"go.uber.org/zap"
@@ -174,9 +173,4 @@ func gRpcServerGraceStop(server *grpc.Server) {
 	// todo 服务注销
 
 	logger.ZapLogger.Info("gRPC Server exiting")
-}
-
-// 创建 Http 处理器
-func NewHttpHandler() *handler.HttpHandler {
-	return &handler.HttpHandler{}
 }
