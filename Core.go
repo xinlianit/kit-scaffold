@@ -73,11 +73,8 @@ func RunHttpServer(handler http.Handler) {
 	httpServerGraceStop(httpServer)
 }
 
-// 服务注册函数
-type ServerRegisterFunc func(server *grpc.Server) error
-
 // 运行 gRPC 服务
-func RunRpcServer(register ServerRegisterFunc) {
+func RunRpcServer(server *grpc.Server) {
 	// 解析命令行参数
 	commandLineParse()
 
@@ -88,7 +85,7 @@ func RunRpcServer(register ServerRegisterFunc) {
 	rpcServer := grpc.NewServer()
 
 	// 注册服务
-	register(rpcServer)
+	//register(rpcServer)
 
 	// Register reflection service on gRPC server.
 	reflection.Register(rpcServer)
