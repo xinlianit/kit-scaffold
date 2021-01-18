@@ -3,12 +3,17 @@ package main
 import (
 	"context"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+	"github.com/spf13/pflag"
 	scaffold "github.com/xinlianit/kit-scaffold"
+	"github.com/xinlianit/kit-scaffold/config"
 	"github.com/xinlianit/kit-scaffold/examples/grpc/app/boot"
 	"google.golang.org/grpc"
 )
 
 func main() {
+	// 命令行参数解析
+	commandLineParse()
+
 	// 启动网关服务
 	go gateway()
 
@@ -20,6 +25,17 @@ func main() {
 
 	// 启动服务
 	scaffold.RunRpcServer(rpcServer)
+}
+
+// 命令行解析
+func commandLineParse() {
+	// 解析命令行参数
+	pflag.String("server.host", "0.0.0.0", "服务地址")
+	pflag.Int("server.port", 80, "服务端口")
+	pflag.String("server.gateway.host", "0.0.0.0", "网关地址")
+	pflag.Int("server.gateway.port", 8080, "网关端口")
+	pflag.Parse()
+	config.Config().BindPFlags(pflag.CommandLine)
 }
 
 // 网关服务

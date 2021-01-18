@@ -2,7 +2,9 @@ package main
 
 import (
 	"github.com/gorilla/mux"
+	"github.com/spf13/pflag"
 	scaffold "github.com/xinlianit/kit-scaffold"
+	"github.com/xinlianit/kit-scaffold/config"
 	"github.com/xinlianit/kit-scaffold/examples/http/endpoint"
 	"github.com/xinlianit/kit-scaffold/examples/http/middleware"
 	"github.com/xinlianit/kit-scaffold/examples/http/transport"
@@ -10,10 +12,21 @@ import (
 )
 
 func main() {
+	commandLineParse()
+
 	httpHandler := NewHttpHandler()
 
 	// 运行服务
 	scaffold.RunHttpServer(httpHandler)
+}
+
+// 命令行解析
+func commandLineParse() {
+	// 解析命令行参数
+	pflag.String("server.host", "0.0.0.0", "服务地址")
+	pflag.Int("server.port", 80, "服务端口")
+	pflag.Parse()
+	config.Config().BindPFlags(pflag.CommandLine)
 }
 
 func NewHttpHandler() http.Handler {

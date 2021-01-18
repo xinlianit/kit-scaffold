@@ -15,5 +15,5 @@ func GetServerAddress() string {
 
 // 获取网关服务地址
 func GetGatewayServerAddress() string {
-	return fmt.Sprintf("%s:%d", config.Config().GetString("server.grpc.gateway.host"), config.Config().GetInt("server.grpc.gateway.port"))
+	return fmt.Sprintf("%s:%d", config.Config().GetString("server.gateway.host"), config.Config().GetInt("server.gateway.port"))
 }

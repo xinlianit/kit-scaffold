@@ -33,9 +33,9 @@ func init() {
 	Default["server.readTimeout"] = 1000              // 请求读超时(单位：毫秒): Accept + Wait + TLSHandshake + Read Request Head + Read Request Body
 	Default["server.writeTimeout"] = 1000             // 请求写超时(单位：毫秒): Read Request Head + Read Request Body + Response Write
 	Default["server.contextTimeout"] = 5000           // 协程超时(单位：毫秒): 超时自动取消协程
+	Default["server.gateway.host"] = "0.0.0.0"        // 网关地址
+	Default["server.gateway.port"] = 8080             // 网关端口
 	Default["server.grpc.reflection.register"] = true // 是否在gRPC服务中注册reflection服务; true-启用、false-禁用（启用后支持grpcurl命令行工具）
-	Default["server.grpc.gateway.host"] = "0.0.0.0"   // 网关地址
-	Default["server.grpc.gateway.port"] = 80          // 网关端口
 
 	// 应用
 	Default["app.debug"] = false // 是否开启Debug: true-开启、false-关闭

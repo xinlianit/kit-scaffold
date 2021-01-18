@@ -3,7 +3,6 @@ package scaffold
 import (
 	"context"
 	"fmt"
-	"github.com/spf13/pflag"
 	"github.com/xinlianit/kit-scaffold/config"
 	"github.com/xinlianit/kit-scaffold/handler"
 	"github.com/xinlianit/kit-scaffold/logger"
@@ -23,23 +22,9 @@ func init() {
 	// 配置初始化
 	config.Init()
 
-	// 命令行解析
-	commandLineParse()
-
 	// 日志初始化
 	var baseFields []zap.Field
 	logger.ZapLogger = logger.ZapInit(logger.NewDefaultZapConfig(), baseFields)
-}
-
-// 命令行解析
-func commandLineParse() {
-	// 解析命令行参数
-	pflag.String("server.host", "0.0.0.0", "服务地址")
-	pflag.Int("server.port", 80, "服务端口")
-	pflag.String("gateway.host", "0.0.0.0", "网关地址")
-	pflag.Int("gateway.port", 80, "网关端口")
-	pflag.Parse()
-	config.Config().BindPFlags(pflag.CommandLine)
 }
 
 // 运行 Http 服务
