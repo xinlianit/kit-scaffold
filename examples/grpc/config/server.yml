@@ -6,6 +6,12 @@ server:
   port: 8080
   # gRPC
   grpc:
+    # 网关服务
+    gateway:
+      # 网关地址
+      host: 0.0.0.0
+      # 网关端口
+      port: 80
     # 反射
     reflection:
       # 是否在gRPC服务中注册reflection服务; true-启用、false-禁用

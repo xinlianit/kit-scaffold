@@ -7,6 +7,7 @@ import (
 	"github.com/xinlianit/kit-scaffold/config"
 	"github.com/xinlianit/kit-scaffold/handler"
 	"github.com/xinlianit/kit-scaffold/logger"
+	"github.com/xinlianit/kit-scaffold/server"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -21,6 +22,9 @@ import (
 func init() {
 	// 配置初始化
 	config.Init()
+
+	// 命令行解析
+	commandLineParse()
 
 	// 日志初始化
 	var baseFields []zap.Field
@@ -41,11 +45,8 @@ func commandLineParse() {
 // 运行 Http 服务
 // @param handler http 处理器
 func RunHttpServer(handler http.Handler) {
-	// 解析命令行参数
-	commandLineParse()
-
 	// 服务地址
-	address := fmt.Sprintf("%s:%d", config.Config().GetString("server.host"), config.Config().GetInt("server.port"))
+	address := server.GetServerAddress()
 
 	httpServer := &http.Server{
 		Addr:         address,
@@ -74,17 +75,14 @@ func RunHttpServer(handler http.Handler) {
 }
 
 // 运行 gRPC 服务
-func RunRpcServer(server *grpc.Server) {
-	// 解析命令行参数
-	commandLineParse()
-
+func RunRpcServer(grpcServer *grpc.Server) {
 	// 服务地址
-	address := fmt.Sprintf("%s:%d", config.Config().GetString("server.host"), config.Config().GetInt("server.port"))
+	address := server.GetServerAddress()
 
 	// 是否在gRPC服务中注册reflection服务, 开启后支持grpcurl命令行工具
 	if config.Config().GetBool("server.grpc.reflection.register") {
 		// Register reflection service on gRPC server.
-		reflection.Register(server)
+		reflection.Register(grpcServer)
 	}
 
 	// 监听端口
@@ -101,7 +99,7 @@ func RunRpcServer(server *grpc.Server) {
 		// todo 服务注册
 
 		// 启动服务
-		if err := server.Serve(lis); err != nil {
+		if err := grpcServer.Serve(lis); err != nil {
 			logger.ZapLogger.Sugar().Errorf("Server run error: %v", err)
 
 			// todo 注销服务
@@ -110,46 +108,40 @@ func RunRpcServer(server *grpc.Server) {
 		}
 	}()
 
-	gRpcServerGraceStop(server)
+	gRpcServerGraceStop(grpcServer)
 }
 
 // 运行RPC代理服务
-// @param serverAddress 服务地址
-//func runGatewayServer(serverAddress string) {
-//	// 服务地址
-//	address := fmt.Sprintf("%s:%d", config.Config().GetString("gateway.host"), config.Config().GetInt("gateway.port"))
-//
-//	// todo 是否设置连接超时
-//	ctx := context.Background()
-//	ctx, cancel := context.WithCancel(ctx)
-//	defer cancel()
-//
-//	// 网关多路复用器
-//	gatewayMux := runtime.NewServeMux()
-//
-//	// 连接参数
-//	opts := []grpc.DialOption{
-//		// 不启用TLS的认证
-//		grpc.WithInsecure(),
-//	}
-//
-//	// 注册网关服务
-//	if err := RegisterGatewayServer(ctx, gatewayMux, serverAddress, opts); err != nil {
-//		log.Println(err)
-//	}
-//
-//	// todo 注册网关服务
-//
-//	// 启动Http服务器（gRPC服务代理）
-//	logger.ZapLogger.Info(fmt.Sprintf("Listening and serving Gateway HTTP on %s, PID: %d", address, os.Getpid()))
-//	if err := http.ListenAndServe(address, gatewayMux); err != nil {
-//		logger.ZapLogger.Sugar().Errorf("Server run error: %v", err)
-//
-//		// todo 注销网关服务
-//
-//		panic("Server run error: " + err.Error())
-//	}
-//}
+// @param handler http 处理器
+func RunGatewayServer(handler http.Handler) {
+	// 服务地址
+	address := server.GetGatewayServerAddress()
+
+	httpServer := &http.Server{
+		Addr:         address,
+		Handler:      handler,
+		ReadTimeout:  time.Duration(config.Config().GetInt("server.readTimeout")) * time.Millisecond,
+		WriteTimeout: time.Duration(config.Config().GetInt("server.writeTimeout")) * time.Millisecond,
+	}
+
+	// 启动Http服务器（gRPC服务代理）
+	logger.ZapLogger.Info(fmt.Sprintf("Listening and serving Gateway HTTP on %s, PID: %d", address, os.Getpid()))
+
+	go func() {
+		// todo 注册网关服务
+
+		// 启动并监听服务
+		if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			logger.ZapLogger.Sugar().Errorf("Gateway server run error: %v", err)
+
+			// todo 注销网关服务
+
+			panic("Gateway server run error: " + err.Error())
+		}
+	}()
+
+	httpServerGraceStop(httpServer)
+}
 
 // HTTP 服务停止
 // @param server http 服务实例
