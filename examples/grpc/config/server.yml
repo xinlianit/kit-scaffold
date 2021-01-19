@@ -9,7 +9,7 @@ server:
     # 网关地址
     host: 0.0.0.0
     # 网关端口
-    port: 80
+    port: 8000
   # gRPC
   grpc:
     # 反射
