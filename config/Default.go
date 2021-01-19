@@ -59,7 +59,7 @@ func init() {
 	Default["logger.rpc.logFile"] = common.GetLogPath() + "/rpc.log"        // RPC 调用日志
 
 	// 配置中心
-	Default["app.configCenter.enable"] = true                                                   // 是否启用配置中心; true-启用、false-关闭
+	Default["app.configCenter.enable"] = false                                                  // 是否启用配置中心; true-启用、false-关闭
 	Default["app.configCenter.type"] = "nacos"                                                  // 配置中心类型
 	Default["app.configCenter.nacosDefaultGroup"] = env                                         // nacos 默认分组
 	Default["app.configCenter.configCacheDir"] = filepath.Join(common.GetCachePath(), "config") // 动态配置缓存目录

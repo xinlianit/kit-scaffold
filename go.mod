@@ -10,6 +10,8 @@ require (
 	github.com/google/uuid v1.1.2
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
+	github.com/nacos-group/nacos-sdk-go v1.0.3
+	github.com/shirou/gopsutil v3.20.12+incompatible // indirect
 	github.com/sirupsen/logrus v1.7.0
 	github.com/spf13/pflag v1.0.3
 	github.com/spf13/viper v1.7.1

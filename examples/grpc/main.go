@@ -6,13 +6,16 @@ import (
 	"github.com/spf13/pflag"
 	scaffold "github.com/xinlianit/kit-scaffold"
 	"github.com/xinlianit/kit-scaffold/config"
-	"github.com/xinlianit/kit-scaffold/examples/grpc/app/boot"
+	"github.com/xinlianit/kit-scaffold/examples/grpc/boot"
 	"google.golang.org/grpc"
 )
 
 func main() {
 	// 命令行参数解析
 	commandLineParse()
+
+	// 启动初始化
+	boot.Init()
 
 	// 启动网关服务
 	go gateway()
