@@ -3,10 +3,10 @@ package scaffold
 import (
 	"context"
 	"fmt"
+	"github.com/xinlianit/kit-scaffold/boot"
 	"github.com/xinlianit/kit-scaffold/config"
 	"github.com/xinlianit/kit-scaffold/logger"
 	"github.com/xinlianit/kit-scaffold/server"
-	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"net"
@@ -18,12 +18,8 @@ import (
 )
 
 func init() {
-	// 配置初始化
-	config.Init()
-
-	// 日志初始化
-	var baseFields []zap.Field
-	logger.ZapLogger = logger.ZapInit(logger.NewDefaultZapConfig(), baseFields)
+	// 框架初始化
+	boot.Init()
 }
 
 // 运行 Http 服务
