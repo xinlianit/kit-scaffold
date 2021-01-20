@@ -3,7 +3,7 @@ package common
 import (
 	"context"
 	httpTransport "github.com/go-kit/kit/transport/http"
-	"github.com/xinlianit/go-util/util"
+	"github.com/xinlianit/go-util"
 	"github.com/xinlianit/kit-scaffold/model"
 	"net/http"
 )

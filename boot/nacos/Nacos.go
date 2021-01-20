@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/nacos-group/nacos-sdk-go/clients"
 	"github.com/nacos-group/nacos-sdk-go/common/constant"
-	"github.com/xinlianit/go-util/util"
+	"github.com/xinlianit/go-util"
 	"github.com/xinlianit/kit-scaffold/config"
 	"github.com/xinlianit/kit-scaffold/logger"
 	"go.uber.org/zap"

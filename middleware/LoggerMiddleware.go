@@ -3,7 +3,7 @@ package middleware
 import (
 	"context"
 	"github.com/go-kit/kit/endpoint"
-	"github.com/xinlianit/go-util/util"
+	"github.com/xinlianit/go-util"
 	"github.com/xinlianit/kit-scaffold/common"
 	"github.com/xinlianit/kit-scaffold/config"
 	"github.com/xinlianit/kit-scaffold/logger"

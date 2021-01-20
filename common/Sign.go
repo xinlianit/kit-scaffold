@@ -1,6 +1,6 @@
 package common
 
-import "github.com/xinlianit/go-util/util"
+import "github.com/xinlianit/go-util"
 
 // 生成签名
 // @param digest 摘要

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
-	"github.com/xinlianit/go-util/util"
+	"github.com/xinlianit/go-util"
 	"github.com/xinlianit/kit-scaffold/common"
 	"github.com/xinlianit/kit-scaffold/common/constant"
 	"path"
