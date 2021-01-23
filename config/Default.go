@@ -30,8 +30,8 @@ func init() {
 	// 服务
 	Default["server.host"] = "0.0.0.0"                // 服务地址
 	Default["server.port"] = 80                       // 服务端口
-	Default["server.readTimeout"] = 1000              // 请求读超时(单位：毫秒): Accept + Wait + TLSHandshake + Read Request Head + Read Request Body
-	Default["server.writeTimeout"] = 1000             // 请求写超时(单位：毫秒): Read Request Head + Read Request Body + Response Write
+	Default["server.readTimeout"] = 3000              // 请求读超时(单位：毫秒): Accept + Wait + TLSHandshake + Read Request Head + Read Request Body
+	Default["server.writeTimeout"] = 5000             // 请求写超时(单位：毫秒): Read Request Head + Read Request Body + Response Write
 	Default["server.contextTimeout"] = 5000           // 协程超时(单位：毫秒): 超时自动取消协程
 	Default["server.gateway.host"] = "0.0.0.0"        // 网关地址
 	Default["server.gateway.port"] = 8080             // 网关端口
