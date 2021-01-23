@@ -19,16 +19,10 @@ func (e IndexEndpoint) Hello(ctx context.Context, request interface{}) (response
 	helloReq := request.(req.HelloRequest)
 
 	businessInfoService := business.NewBusinessInfoService()
+	defer business.Close()
 
 	result := businessInfoService.GetBusinessInfo()
-	//result2 := businessInfoService.GetBusinessInfo()
-	//fmt.Println(result2)
-
-	//businessInfoService1 := business.NewBusinessInfoService()
-	//
-	//result3 := businessInfoService1.GetBusinessInfo()
-	//result4 := businessInfoService1.GetBusinessInfo()
-	//fmt.Println(result3, result4)
+	businessInfoService.GetBusinessInfo()
 
 	// 调用服务
 	helloEntity, _ := e.indexService.Hello(helloReq.GetId())

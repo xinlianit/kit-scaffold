@@ -7,7 +7,6 @@ import (
 	"github.com/xinlianit/kit-scaffold/config"
 	"github.com/xinlianit/kit-scaffold/examples/http/endpoint"
 	"github.com/xinlianit/kit-scaffold/examples/http/middleware"
-	"github.com/xinlianit/kit-scaffold/examples/http/remote"
 	"github.com/xinlianit/kit-scaffold/examples/http/transport"
 	"github.com/xinlianit/kit-scaffold/handler"
 	"net/http"
@@ -15,10 +14,6 @@ import (
 
 func main() {
 	commandLineParse()
-
-	// 初始化远程服务
-	remote.Init()
-	defer remote.Close()
 
 	httpHandler := NewHttpHandler()
 

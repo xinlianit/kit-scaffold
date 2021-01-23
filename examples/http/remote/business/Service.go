@@ -12,7 +12,8 @@ var (
 	err  error
 )
 
-func Connect() *grpc.ClientConn {
+func connect() *grpc.ClientConn {
+	// 创建连接
 	serverAddress := "127.0.0.1:8080"
 
 	dialOptions := []grpc.DialOption{
@@ -31,14 +32,13 @@ func Connect() *grpc.ClientConn {
 // 获取上下文
 func getContext() (context.Context, context.CancelFunc) {
 	// TODO metadata 运用
-	return  context.WithTimeout(context.Background(), time.Millisecond * 3000)
-	//return  context.WithDeadline(context.Background(), time.Now().Add(time.Millisecond * 1000))
+	return  context.WithDeadline(context.Background(), time.Now().Add(time.Millisecond * 1000))
 }
 
 // 商家信息服务实例
 func NewBusinessInfoService() businessInfoService {
 	return businessInfoService{
-		client: service.NewBusinessInfoServiceClient(conn),
+		client: service.NewBusinessInfoServiceClient(connect()),
 	}
 }
 
