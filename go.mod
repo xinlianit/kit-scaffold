@@ -16,7 +16,7 @@ require (
 	github.com/sirupsen/logrus v1.7.0
 	github.com/spf13/pflag v1.0.3
 	github.com/spf13/viper v1.7.1
-	github.com/xinlianit/go-util v1.0.0-2021012001
+	github.com/xinlianit/go-util v1.0.0-2021012301
 	go.uber.org/zap v1.16.0
 	google.golang.org/grpc v1.34.0
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect

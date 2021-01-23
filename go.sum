@@ -564,6 +564,8 @@ github.com/xinlianit/go-util v1.0.0-2020121601 h1:G1o53tzWohl2TWYLU8yEHImq3GXdKB
 github.com/xinlianit/go-util v1.0.0-2020121601/go.mod h1:YP76qkz4sBT2RFtD/UOiQvYvoPfWzyxyKOGB8OPX9Z8=
 github.com/xinlianit/go-util v1.0.0-2021012001 h1:0zjH2RDPcl51JGZhaoWATP3wY+7i9iuBKNj+U/7c36M=
 github.com/xinlianit/go-util v1.0.0-2021012001/go.mod h1:YP76qkz4sBT2RFtD/UOiQvYvoPfWzyxyKOGB8OPX9Z8=
+github.com/xinlianit/go-util v1.0.0-2021012301 h1:vmSAmdbf7n/vALaIX59XqPrdNKLl7EmY7m1iicN7Ufk=
+github.com/xinlianit/go-util v1.0.0-2021012301/go.mod h1:YP76qkz4sBT2RFtD/UOiQvYvoPfWzyxyKOGB8OPX9Z8=
 go.etcd.io/bbolt v1.3.2/go.mod h1:IbVyRI1SCnLcuJnV2u8VeU0CEYM7e686BmAb1XKL+uU=
 go.etcd.io/bbolt v1.3.3/go.mod h1:IbVyRI1SCnLcuJnV2u8VeU0CEYM7e686BmAb1XKL+uU=
 go.etcd.io/bbolt v1.3.4/go.mod h1:G5EMThwa9y8QZGBClrRx5EY+Yw9kAhnjy3bSjsnlVTQ=

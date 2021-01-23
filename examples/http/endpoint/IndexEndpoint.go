@@ -22,7 +22,6 @@ func (e IndexEndpoint) Hello(ctx context.Context, request interface{}) (response
 	defer business.Close()
 
 	result := businessInfoService.GetBusinessInfo()
-	businessInfoService.GetBusinessInfo()
 
 	// 调用服务
 	helloEntity, _ := e.indexService.Hello(helloReq.GetId())
