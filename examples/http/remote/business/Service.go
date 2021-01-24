@@ -1,13 +1,10 @@
 package business
 
 import (
-	"context"
 	"gitee.com/jirenyou/business.palm.proto/pb/go/service"
-	"github.com/xinlianit/go-util"
 	"github.com/xinlianit/kit-scaffold/examples/http/remote/business/credential"
+	"github.com/xinlianit/kit-scaffold/examples/http/remote/business/interceptor"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/metadata"
-	"time"
 )
 
 var (
@@ -16,9 +13,13 @@ var (
 )
 
 func connect() *grpc.ClientConn {
-	// 创建连接
-	serverAddress := "127.0.0.1:8080"
+	// 连接器
+	interceptors := []grpc.UnaryClientInterceptor{
+		// 请求拦截器
+		interceptor.RequestInterceptor,
+	}
 
+	// 连接参数
 	dialOptions := []grpc.DialOption{
 		// 忽略TLS验证
 		grpc.WithInsecure(),
@@ -26,8 +27,12 @@ func connect() *grpc.ClientConn {
 		grpc.WithBlock(),
 		// 应用凭证
 		grpc.WithPerRPCCredentials(credential.AppCredential{}),
+		// 注册拦截器
+		grpc.WithChainUnaryInterceptor(interceptors...),
 	}
 
+	// 创建连接
+	serverAddress := "127.0.0.1:8080"
 	conn, err = grpc.Dial(serverAddress, dialOptions...)
 
 	if err != nil {
@@ -35,21 +40,6 @@ func connect() *grpc.ClientConn {
 	}
 
 	return conn
-}
-
-// 获取上下文
-func getContext() (context.Context, context.CancelFunc) {
-	// 创建 context
-	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(time.Millisecond*1000))
-
-	metadataUtil := util.NewMetadataUtil()
-	// 设置 metadata 到 context
-	mdKvs := map[string]interface{}{
-		"X-Request-Id": "202101231700123", // 请求ID
-	}
-	metadataUtil.SetMetadata(mdKvs)
-	ctx = metadata.NewOutgoingContext(ctx, metadataUtil.GetMetadata())
-	return ctx, cancel
 }
 
 // 商家信息服务实例

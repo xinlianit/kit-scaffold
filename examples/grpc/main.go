@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/pflag"
 	scaffold "github.com/xinlianit/kit-scaffold"
 	"github.com/xinlianit/kit-scaffold/config"
+	"github.com/xinlianit/kit-scaffold/examples/grpc/app/interceptor"
 	"github.com/xinlianit/kit-scaffold/examples/grpc/boot"
 	"google.golang.org/grpc"
 )
@@ -20,8 +21,18 @@ func main() {
 	// 启动网关服务
 	go gateway()
 
+	// 拦截器
+	interceptors := []grpc.UnaryServerInterceptor{
+		// 凭证验证
+		interceptor.AuthInterceptor,
+	}
+
 	// 创建 RPC 服务
-	rpcServer := grpc.NewServer()
+	opts := []grpc.ServerOption{
+		// 注册拦截器
+		grpc.ChainUnaryInterceptor(interceptors...),
+	}
+	rpcServer := grpc.NewServer(opts...)
 
 	// 注册服务
 	boot.RegisterRpcServer(rpcServer)
