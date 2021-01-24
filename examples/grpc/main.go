@@ -23,6 +23,8 @@ func main() {
 
 	// 拦截器
 	interceptors := []grpc.UnaryServerInterceptor{
+		// 请求取消
+		interceptor.CancelInterceptor,
 		// 凭证验证
 		interceptor.AuthInterceptor,
 	}
