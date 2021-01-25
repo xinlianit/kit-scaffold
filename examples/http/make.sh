@@ -12,6 +12,11 @@
 #      -w 去掉DWARF调试信息(注: 程序不能使用gdb调试)
 CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -x -ldflags "-s -w" -o ./bin/kit-scaffold.palm.http.api.srv
 
+# 重命名可执行文件
+if [ -f "./bin/kit-scaffold.palm.http.api" ];then
+  mv ./bin/kit-scaffold.palm.http.api ./bin/kit-scaffold.palm.http.api.back
+fi
+
 # UPX 压缩
 # -o：指定输出的文件名
 # -k：保留备份原文件
@@ -27,4 +32,14 @@ CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -x -ldflags "-s -w" -o ./bin/kit
 # -h：显示帮助信息
 # --brute：尝试所有可用的压缩方法，slow
 # --ultra-brute：比楼上更极端，very slow
-upx -9 -v -o ./bin/kit-scaffold.palm.http.api ./bin/kit-scaffold.palm.http.api.srv && rm -rf ./bin/kit-scaffold.palm.http.api.srv
+upx -9 -v -o ./bin/kit-scaffold.palm.http.api ./bin/kit-scaffold.palm.http.api.srv
+
+# 删除服务编译文件
+if [ -f "./bin/kit-scaffold.palm.http.api.srv" ];then
+  rm -f ./bin/kit-scaffold.palm.http.api.srv
+fi
+
+# 删除备份可执行文件
+if [ -f "./bin/kit-scaffold.palm.http.api.back" ];then
+  rm -f ./bin/kit-scaffold.palm.http.api.back
+fi
