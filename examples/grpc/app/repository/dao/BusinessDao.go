@@ -6,17 +6,17 @@ import (
 
 // 商家数据访问
 type BusinessDao struct {
+	businessEntity entity.BusinessEntity
 }
 
 // 获取商家 - 通过商家ID
 func (d BusinessDao) GetBusinessById(businessId int32) entity.BusinessEntity {
-	result := entity.BusinessEntity{}
 
-	//return result
+	//return d.businessEntity
 
 	// todo 数据库查询
-	result.BusinessId = 100
-	result.BusinessName = "test_business==="
+	d.businessEntity.BusinessId = 100
+	d.businessEntity.BusinessName = "test_business==="
 
-	return result
+	return d.businessEntity
 }

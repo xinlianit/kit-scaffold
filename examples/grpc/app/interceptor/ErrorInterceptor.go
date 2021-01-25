@@ -16,12 +16,16 @@ func ErrorInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServ
 	if err != nil {
 		// 错误类型
 		switch errException := err.(type) {
-		// 公共错误
-		case exception.CommonException:
+		// 异常错误
+		case exception.Exception:
+			return resp, status.Error(codes.Code(errException.GetCode()), errException.GetMessage())
+		// Service 异常
+		case exception.ServiceException:
 			return resp, status.Error(codes.Code(errException.GetCode()), errException.GetMessage())
 		default:
 			return resp, status.Error(codes.Unknown, errException.Error())
 		}
 	}
+
 	return resp, err
 }
