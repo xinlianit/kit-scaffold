@@ -10,9 +10,13 @@ type BusinessDao struct {
 
 // 获取商家 - 通过商家ID
 func (d BusinessDao) GetBusinessById(businessId int32) entity.BusinessEntity {
+	result := entity.BusinessEntity{}
+
+	//return result
+
 	// todo 数据库查询
-	return entity.BusinessEntity{
-		BusinessId:   100,
-		BusinessName: "test_business",
-	}
+	result.BusinessId = 100
+	result.BusinessName = "test_business==="
+
+	return result
 }

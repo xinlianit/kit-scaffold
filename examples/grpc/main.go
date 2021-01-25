@@ -27,6 +27,8 @@ func main() {
 		interceptor.CancelInterceptor,
 		// 凭证验证
 		interceptor.AuthInterceptor,
+		// 错误拦截器
+		interceptor.ErrorInterceptor,
 	}
 
 	// 创建 RPC 服务

@@ -22,7 +22,7 @@ func (e BusinessInfoEndpoint) GetBusinessInfo() endpoint.Endpoint {
 		// 调用服务
 		business, err := e.businessInfoService.BusinessInfo(getBusinessInfoReq.GetBusinessId())
 		if err != nil {
-
+			return nil, err
 		}
 
 		// 返回响应数据
