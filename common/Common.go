@@ -3,7 +3,9 @@ package common
 import (
 	"github.com/google/uuid"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"strings"
 )
 
 // 获取环境变量
@@ -18,8 +20,16 @@ func GetEnv(key string, defaultValue interface{}) interface{} {
 
 // 获取应用根路径
 func GetAppRootPath() string {
-	appPath, _ := os.Getwd()
-	return appPath
+	// 可执行文件路径
+	file, _ := exec.LookPath(os.Args[0])
+	// 计算可执行文件绝对路径
+	path, _ := filepath.Abs(file)
+	// 获取字符串(路径分隔符)最后出现的索引位置
+	index := strings.LastIndex(path, string(os.PathSeparator))
+	// 截取字符串长度(并去除/bin)
+	path = path[:index-4]
+
+	return path
 }
 
 // 获取应用根路径
