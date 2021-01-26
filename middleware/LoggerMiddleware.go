@@ -3,6 +3,7 @@ package middleware
 import (
 	"context"
 	"github.com/go-kit/kit/endpoint"
+	"github.com/sirupsen/logrus"
 	"github.com/xinlianit/go-util"
 	"github.com/xinlianit/kit-scaffold/common"
 	"github.com/xinlianit/kit-scaffold/config"
@@ -70,6 +71,9 @@ func LoggerMiddleware(next endpoint.Endpoint) endpoint.Endpoint {
 	go receiveAndRecordLog()
 
 	return func(ctx context.Context, req interface{}) (rsp interface{}, err error) {
+		// 处理请求前
+		logrus.Printf("[before] 日志中间件")
+
 		// 请求对象
 		request := common.Request(ctx)
 
@@ -93,6 +97,9 @@ func LoggerMiddleware(next endpoint.Endpoint) endpoint.Endpoint {
 
 		// 执行请求
 		rsp, err = next(ctx, req)
+
+		// 处理请求后
+		logrus.Printf("[after] 日志中间件")
 
 		// 响应数据
 		log.ResponseTime = util.TimeUtil().GetCurrentMilliTime()

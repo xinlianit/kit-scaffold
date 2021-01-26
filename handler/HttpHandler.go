@@ -42,6 +42,8 @@ func (h HttpHandler) Server(e endpoint.Endpoint, dec httpTransport.DecodeRequest
 	e = middleware.RequestMiddleware(e)
 	// 日志中间件
 	e = middleware.LoggerMiddleware(e)
+	// 宕机恢复中间件
+	e = middleware.RecoverMiddleware(e)
 
 	return httpTransport.NewServer(e, common.RequestDecode(dec), common.ResponseEncode, h.options...)
 }
