@@ -72,6 +72,7 @@ func (c ConsulClient) RegisterService(serviceId string) error {
 		Interval: (time.Millisecond * time.Duration(interval)).String(),
 		// 注销时间，服务过期时间
 		//DeregisterCriticalServiceAfter: (time.Millisecond * time.Duration(maxLifeTime)).String(),
+		DeregisterCriticalServiceAfter: "10s",
 	}
 
 	return c.client.Agent().ServiceRegister(reg)

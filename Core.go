@@ -3,6 +3,7 @@ package scaffold
 import (
 	"context"
 	"fmt"
+	consulApi "github.com/hashicorp/consul/api"
 	"github.com/xinlianit/go-util"
 	"github.com/xinlianit/kit-scaffold/boot"
 	"github.com/xinlianit/kit-scaffold/config"
@@ -142,11 +143,65 @@ func RunGatewayServer(handler http.Handler) {
 
 	go func() {
 		// consul 客户端
-		consulClient := drive.NewConsulClient()
+		cfg := consulApi.DefaultConfig()
+		// consul 地址
+		cfg.Address = config.Config().GetString("app.serviceCenter.consul.address")
+		consulClient, err := consulApi.NewClient(cfg)
+		if err != nil {
+			logger.ZapLogger.Sugar().Errorf("Consul client initialize error: %v", err)
+		}else{
+			// 服务名称
+			serviceName := config.Config().GetString("app.serviceCenter.register.name")
+			if serviceName == "" {
+				serviceName = config.Config().GetString("app.id")
+			}
 
-		// 注册网关服务
-		if err := consulClient.RegisterService(serviceGatewayId); err != nil {
-			logger.ZapLogger.Sugar().Errorf("Server register to consul error: %v", err)
+			// 服务注册信息
+			reg := &consulApi.AgentServiceRegistration{
+				// 服务ID
+				ID: serviceGatewayId,
+				// 服务名称
+				Name: serviceName + "-gateway",
+				// 服务地址
+				Address: util.ServerUtil().GetServerIp(),
+				// 服务端口
+				Port: config.Config().GetInt("server.gateway.port"),
+			}
+
+			// 服务标签
+			if serviceTags := config.Config().GetStringSlice("app.serviceCenter.register.tags"); serviceTags != nil {
+				var newTags []string
+
+				for _, tagItem := range serviceTags {
+					newTags = append(newTags, tagItem + "-gateway")
+				}
+
+				reg.Tags = newTags
+			}
+
+			// 健康检查
+			interval := config.Config().GetInt("app.serviceCenter.healthCheck.gateway.interval")
+			timeout := config.Config().GetInt("app.serviceCenter.healthCheck.gateway.timeout")
+			reg.Check = &consulApi.AgentServiceCheck{
+				// 检测间隔
+				Interval: (time.Millisecond * time.Duration(interval)).String(),
+				// 检测超时
+				Timeout: (time.Millisecond * time.Duration(timeout)).String(),
+				// 检测地址
+				HTTP: fmt.Sprintf("http://%s:%d/%s", reg.Address, reg.Port, "health"),
+				// 检测请求方式
+				Method: config.Config().GetString("app.serviceCenter.healthCheck.gateway.method"),
+			}
+
+			// 检测项名称
+			if checkName := config.Config().GetString("app.serviceCenter.healthCheck.gateway.name"); checkName != "" {
+				reg.Check.Name = checkName
+			}
+
+			// 注册网关服务
+			if err := consulClient.Agent().ServiceRegister(reg); err != nil {
+				logger.ZapLogger.Sugar().Errorf("Server register to consul error: %v", err)
+			}
 		}
 
 		// 启动并监听服务
@@ -154,7 +209,7 @@ func RunGatewayServer(handler http.Handler) {
 			logger.ZapLogger.Sugar().Errorf("Gateway server run error: %v", err)
 
 			// 注销网关服务
-			if deregisterErr := consulClient.DeregisterService(serviceGatewayId); deregisterErr != nil {
+			if deregisterErr := consulClient.Agent().ServiceDeregister(serviceGatewayId); deregisterErr != nil {
 				logger.ZapLogger.Sugar().Errorf("Service deregister error from consul: %v", deregisterErr)
 			}
 
