@@ -3,8 +3,10 @@ package scaffold
 import (
 	"context"
 	"fmt"
+	"github.com/xinlianit/go-util"
 	"github.com/xinlianit/kit-scaffold/boot"
 	"github.com/xinlianit/kit-scaffold/config"
+	"github.com/xinlianit/kit-scaffold/drive"
 	"github.com/xinlianit/kit-scaffold/logger"
 	"github.com/xinlianit/kit-scaffold/server"
 	"google.golang.org/grpc"
@@ -17,10 +19,20 @@ import (
 	"time"
 )
 
+// 服务ID
+var serviceId string
+
 func init() {
 	// 框架初始化
 	boot.Init()
+
+	// 服务ID
+	appId := config.Config().GetString("app.id")	// 服务appId
+	serverAddress := util.ServerUtil().GetServerIp()	// 服务地址
+	serverPort := config.Config().GetInt("server.port")	// 服务端口
+	serviceId = fmt.Sprintf("%s-%s:%d", appId, serverAddress, serverPort)
 }
+
 
 // 运行 Http 服务
 // @param handler http 处理器
@@ -76,15 +88,22 @@ func RunRpcServer(grpcServer *grpc.Server) {
 	logger.ZapLogger.Info(fmt.Sprintf("Listening and serving gRPC on %s, PID: %d", address, os.Getpid()))
 
 	go func() {
-		// todo 服务注册
+		// consul 客户端
+		consulClient := drive.NewConsulClient()
+
+		// 服务注册
+		if err := consulClient.RegisterService(serviceId); err != nil {
+			logger.ZapLogger.Sugar().Errorf("Server register to consul error: %v", err)
+		}
 
 		// 启动服务
 		if err := grpcServer.Serve(lis); err != nil {
-			logger.ZapLogger.Sugar().Errorf("Server run error: %v", err)
+			// 注销服务
+			if deregisterErr := consulClient.DeregisterService(serviceId); deregisterErr != nil {
+				logger.ZapLogger.Sugar().Errorf("Service deregister error from consul: %v", deregisterErr)
+			}
 
-			// todo 注销服务
-
-			panic("Server run error: " + err.Error())
+			logger.ZapLogger.Sugar().Panicf("Server run error: %v", err)
 		}
 	}()
 
@@ -166,7 +185,10 @@ func gRpcServerGraceStop(server *grpc.Server) {
 	logger.ZapLogger.Sugar().Infof("Get Signal: %d", sig)
 	logger.ZapLogger.Info("Shutdown Server ...")
 
-	// todo 服务注销
+	// 服务注销
+	if deregisterErr := drive.NewConsulClient().DeregisterService(serviceId); deregisterErr != nil {
+		logger.ZapLogger.Sugar().Errorf("Service deregister error from consul: %v", deregisterErr)
+	}
 
 	logger.ZapLogger.Info("gRPC Server exiting")
 }

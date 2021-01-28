@@ -65,6 +65,12 @@ func init() {
 	Default["app.configCenter.configCacheDir"] = filepath.Join(common.GetCachePath(), "config") // 动态配置缓存目录
 
 	// 服务中心
-	Default["app.serviceCenter.register.enable"] = false // 是否注册服务; true-是、false-否
-	Default["app.serviceCenter.type"] = "etcd"           // 服务中心类型: etcd、consul
+	Default["app.serviceCenter.register.enable"] = false                      // 是否注册服务; true-是、false-否
+	Default["app.serviceCenter.type"] = "consul"                              // 服务中心类型: consul、etcd
+	// 健康检测
+	Default["app.serviceCenter.healthCheck.grpc.tls.enable"] = false // 是否启用TLS；true-是、false-否
+	Default["app.serviceCenter.healthCheck.grpc.interval"] = 3000 // 检测间隔（单位：毫秒）
+	Default["app.serviceCenter.healthCheck.grpc.maxLifeTime"] = 60000 // 服务最大生存周期（单位：毫秒）
+	// consul
+	Default["app.serviceCenter.consul.address"] = "127.0.0.1:8500" // 服务中心地址
 }
