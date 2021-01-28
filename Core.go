@@ -21,6 +21,7 @@ import (
 
 // 服务ID
 var serviceId string
+var serviceGatewayId string
 
 func init() {
 	// 框架初始化
@@ -31,6 +32,10 @@ func init() {
 	serverAddress := util.ServerUtil().GetServerIp()	// 服务地址
 	serverPort := config.Config().GetInt("server.port")	// 服务端口
 	serviceId = fmt.Sprintf("%s-%s:%d", appId, serverAddress, serverPort)
+
+	// 网关服务ID
+	serverGatewayPort := config.Config().GetInt("server.gateway.port")	// 服务端口
+	serviceGatewayId = fmt.Sprintf("%s-%s-%s:%d", appId, "gateway", serverAddress, serverGatewayPort)
 }
 
 
@@ -51,13 +56,22 @@ func RunHttpServer(handler http.Handler) {
 	logger.ZapLogger.Info(fmt.Sprintf("Listening and serving HTTP on %s, PID: %d", address, os.Getpid()))
 
 	go func() {
-		// todo 服务注册
+		// consul 客户端
+		consulClient := drive.NewConsulClient()
+
+		// 服务注册
+		if err := consulClient.RegisterService(serviceId); err != nil {
+			logger.ZapLogger.Sugar().Errorf("Server register to consul error: %v", err)
+		}
 
 		// 启动并监听服务
 		if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			logger.ZapLogger.Sugar().Errorf("Server run error: %v", err)
 
-			// todo 服务注销
+			// 服务注销
+			if deregisterErr := consulClient.DeregisterService(serviceId); deregisterErr != nil {
+				logger.ZapLogger.Sugar().Errorf("Service deregister error from consul: %v", deregisterErr)
+			}
 
 			panic("Server run error: " + err.Error())
 		}
@@ -127,19 +141,28 @@ func RunGatewayServer(handler http.Handler) {
 	logger.ZapLogger.Info(fmt.Sprintf("Listening and serving Gateway HTTP on %s, PID: %d", address, os.Getpid()))
 
 	go func() {
-		// todo 注册网关服务
+		// consul 客户端
+		consulClient := drive.NewConsulClient()
+
+		// 注册网关服务
+		if err := consulClient.RegisterService(serviceGatewayId); err != nil {
+			logger.ZapLogger.Sugar().Errorf("Server register to consul error: %v", err)
+		}
 
 		// 启动并监听服务
 		if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			logger.ZapLogger.Sugar().Errorf("Gateway server run error: %v", err)
 
-			// todo 注销网关服务
+			// 注销网关服务
+			if deregisterErr := consulClient.DeregisterService(serviceGatewayId); deregisterErr != nil {
+				logger.ZapLogger.Sugar().Errorf("Service deregister error from consul: %v", deregisterErr)
+			}
 
 			panic("Gateway server run error: " + err.Error())
 		}
 	}()
 
-	httpServerGraceStop(httpServer)
+	gatewayServerGraceStop(httpServer)
 }
 
 // HTTP 服务停止
@@ -165,7 +188,10 @@ func httpServerGraceStop(server *http.Server) {
 		logger.ZapLogger.Sugar().Fatal("Server Shutdown: %v", err)
 	}
 
-	// todo 服务注销
+	// 服务注销
+	if deregisterErr := drive.NewConsulClient().DeregisterService(serviceId); deregisterErr != nil {
+		logger.ZapLogger.Sugar().Errorf("Service deregister error from consul: %v", deregisterErr)
+	}
 
 	logger.ZapLogger.Info("Server exiting")
 }
@@ -191,4 +217,35 @@ func gRpcServerGraceStop(server *grpc.Server) {
 	}
 
 	logger.ZapLogger.Info("gRPC Server exiting")
+}
+
+// gateway 服务停止
+// @param server http 服务实例
+func gatewayServerGraceStop(server *http.Server) {
+	// 信号通道
+	signalChan := make(chan os.Signal, 1)
+	// kill 默认会发送 syscall.SIGTERM 信号
+	// kill -2 发送 syscall.SIGINT 信号，我们常用的Ctrl+C就是触发系统SIGINT信号
+	// kill -9 发送 syscall.SIGKILL 信号，但是不能被捕获，所以不需要添加它
+	// signal.Notify把收到的 syscall.SIGINT或syscall.SIGTERM 信号转发给quit
+	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM) // 信号转发到 signalChan
+	sig := <-signalChan                                        // 阻塞等待接收上述两种信号时，往下执行服务关机
+	logger.ZapLogger.Sugar().Infof("Get Signal: %d", sig)
+	logger.ZapLogger.Info("Shutdown Server ...")
+
+	// 5 秒超时自动取消(当执行一个go 协程时，超时自动取消协程)
+	contextTimeout := config.Config().GetInt("server.contextTimeout")
+	ctx, cancelFunc := context.WithTimeout(context.Background(), time.Duration(contextTimeout)*time.Millisecond)
+	defer cancelFunc()
+
+	if err := server.Shutdown(ctx); err != nil {
+		logger.ZapLogger.Sugar().Fatal("Server Shutdown: %v", err)
+	}
+
+	// 服务注销
+	if deregisterErr := drive.NewConsulClient().DeregisterService(serviceGatewayId); deregisterErr != nil {
+		logger.ZapLogger.Sugar().Errorf("Service deregister error from consul: %v", deregisterErr)
+	}
+
+	logger.ZapLogger.Info("Server exiting")
 }
