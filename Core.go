@@ -182,15 +182,22 @@ func RunGatewayServer(handler http.Handler) {
 			// 健康检查
 			interval := config.Config().GetInt("app.serviceCenter.healthCheck.gateway.interval")
 			timeout := config.Config().GetInt("app.serviceCenter.healthCheck.gateway.timeout")
+			maxLifeTime := config.Config().GetInt("app.serviceCenter.healthCheck.gateway.maxLifeTime")
+			checkAddress := config.Config().GetString("app.serviceCenter.healthCheck.gateway.address")
+			if checkAddress == "" {
+				checkAddress = fmt.Sprintf("http://%s:%d/%s", reg.Address, reg.Port, "health")
+			}
 			reg.Check = &consulApi.AgentServiceCheck{
 				// 检测间隔
 				Interval: (time.Millisecond * time.Duration(interval)).String(),
 				// 检测超时
 				Timeout: (time.Millisecond * time.Duration(timeout)).String(),
 				// 检测地址
-				HTTP: fmt.Sprintf("http://%s:%d/%s", reg.Address, reg.Port, "health"),
+				HTTP: checkAddress,
 				// 检测请求方式
 				Method: config.Config().GetString("app.serviceCenter.healthCheck.gateway.method"),
+				// 注销时间，服务过期时间
+				DeregisterCriticalServiceAfter: (time.Millisecond * time.Duration(maxLifeTime)).String(),
 			}
 
 			// 检测项名称

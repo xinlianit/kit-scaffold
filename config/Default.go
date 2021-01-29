@@ -68,9 +68,13 @@ func init() {
 	Default["app.serviceCenter.register.enable"] = false                      // 是否注册服务; true-是、false-否
 	Default["app.serviceCenter.type"] = "consul"                              // 服务中心类型: consul、etcd
 	// 健康检测
+	Default["app.serviceCenter.healthCheck.enable"] = true // 是否启用健康检查；true-是、false-否
+	Default["app.serviceCenter.healthCheck.type"] = "http" // 健康检查类型；http、tcp、grpc
+	Default["app.serviceCenter.healthCheck.method"] = "GET" // 检测请求方式；GET、POST...
+	Default["app.serviceCenter.healthCheck.interval"] = 3000 // 检测间隔（单位：毫秒）
+	Default["app.serviceCenter.healthCheck.timeout"] = 1000 // 检查超时（单位：毫秒）
+	Default["app.serviceCenter.healthCheck.maxLifeTime"] = 60000 // 服务最大生存周期（单位：毫秒）
 	Default["app.serviceCenter.healthCheck.grpc.tls.enable"] = false // 是否启用TLS；true-是、false-否
-	Default["app.serviceCenter.healthCheck.grpc.interval"] = 3000 // 检测间隔（单位：毫秒）
-	Default["app.serviceCenter.healthCheck.grpc.maxLifeTime"] = 60000 // 服务最大生存周期（单位：毫秒）
 	Default["app.serviceCenter.healthCheck.gateway.interval"] = 3000 // 检测间隔（单位：毫秒）
 	Default["app.serviceCenter.healthCheck.gateway.timeout"] = 1000 // 检测超时（单位：毫秒）
 	Default["app.serviceCenter.healthCheck.gateway.method"] = "GET" // 检测请求方式；默认：GET
