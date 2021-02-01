@@ -14,6 +14,7 @@ func Init() {
 	config.Init()
 
 	// 日志初始化
+	logger.Init()
 	var baseFields []zap.Field
 	logger.ZapLogger = logger.ZapInit(logger.NewDefaultZapConfig(), baseFields)
 

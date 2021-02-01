@@ -4,6 +4,6 @@ package config
 type App struct {
 	Id string `json:"id"`
 	Name string `json:"name"`
-	ConfigCenter ClientConfig `json:"config_center"`
+	ConfigCenter ConfigCenter `json:"config_center"`
 	ServiceCenter ServiceCenter `json:"service_center"`
 }

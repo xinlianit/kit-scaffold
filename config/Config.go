@@ -20,6 +20,9 @@ var (
 	dynamicConfigDir   string                   // 动态配置目录
 	configBackupDir    string                   // 动态配置备份目录
 	configBackupPrefix string                   // 动态配置备份前缀
+
+	ServerConfig Server // 服务配置
+	AppConfig App // 应用配置
 )
 
 // 配置初始化
@@ -52,6 +55,17 @@ func initConfig() {
 
 	// 初始化默认配置
 	initDefaultConfig(config, Default)
+
+	// 解析配置到配置结构体
+	// 服务配置
+	if err := config.UnmarshalKey("server", &ServerConfig); err != nil {
+		panic(err)
+	}
+
+	// 应用配置
+	if err := config.UnmarshalKey("app", &AppConfig); err != nil {
+		panic(err)
+	}
 }
 
 // 动态配置

@@ -3,7 +3,6 @@ package logger
 import (
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 	"github.com/xinlianit/go-util"
-	"github.com/xinlianit/kit-scaffold/config"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"time"
@@ -33,13 +32,13 @@ type ZapConfig struct {
 func NewDefaultZapConfig() ZapConfig {
 	// 日志切割类型
 	rotateType := util.RotateTypeDate
-	if config.Config().GetString("logger.rotate.type") == "size" {
+	if loggerConfig.Rotate.Type == "size" {
 		rotateType = util.RotateTypeSize
 	}
 
 	// 最低日志级别
 	lowestLevel := zapcore.DebugLevel
-	switch config.Config().GetString("logger.lowestLevel") {
+	switch loggerConfig.LowestLevel {
 	case "info":
 		lowestLevel = zapcore.InfoLevel
 	case "warn":
@@ -55,18 +54,18 @@ func NewDefaultZapConfig() ZapConfig {
 	}
 
 	return ZapConfig{
-		RotateEnable:     config.Config().GetBool("logger.rotate.enable"),
+		RotateEnable:     loggerConfig.Rotate.Enable,
 		RotateType:       rotateType,
-		MaxSize:          config.Config().GetInt("logger.rotate.size.maxSize"),
-		MaxBackups:       config.Config().GetInt("logger.rotate.size.maxBackups"),
-		Compress:         config.Config().GetBool("logger.rotate.size.compress"),
-		Extend:           config.Config().GetString("logger.rotate.date.extend"),
-		MaxAge:           config.Config().GetInt("logger.maxAge"),
-		LogFile:          config.Config().GetString("logger.runtimeLogFile"),
-		ErrorLogFile:     config.Config().GetString("logger.errorLogFile"),
+		MaxSize:          loggerConfig.Rotate.Size.MaxSize,
+		MaxBackups:       loggerConfig.Rotate.Size.MaxBackups,
+		Compress:         loggerConfig.Rotate.Size.Compress,
+		Extend:           loggerConfig.Rotate.Date.Extend,
+		MaxAge:           loggerConfig.MaxAge,
+		LogFile:          loggerConfig.RuntimeLogFile,
+		ErrorLogFile:     loggerConfig.ErrorLogFile,
 		LowestLevel:      lowestLevel,
-		RecordLineNumber: config.Config().GetBool("logger.recordLineNumber"),
-		LogFormatter:     config.Config().GetString("logger.logFormatter"),
+		RecordLineNumber: loggerConfig.RecordLineNumber,
+		LogFormatter:     loggerConfig.LogFormatter,
 	}
 }
 
