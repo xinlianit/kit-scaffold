@@ -9,7 +9,6 @@ import (
 	"github.com/xinlianit/kit-scaffold/config"
 	"github.com/xinlianit/kit-scaffold/drive"
 	"github.com/xinlianit/kit-scaffold/logger"
-	"github.com/xinlianit/kit-scaffold/server"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"net"
@@ -21,40 +20,54 @@ import (
 )
 
 // 服务ID
-var serviceId string
-var serviceGatewayId string
+var (
+ 	serviceId string
+ 	serviceGatewayId string
+ 	listenAddress string
+ 	// 服务配置
+ 	serverConfig config.Server
+ 	// 应用配置
+ 	appConfig config.App
+)
 
 func init() {
 	// 框架初始化
 	boot.Init()
 
+	// 配置解析
+	if err := config.Config().UnmarshalKey("server", &serverConfig); err != nil {
+		logger.ZapLogger.Sugar().Panicf("Server config unmarshal error: %v", err)
+		return
+	}
+	if err := config.Config().UnmarshalKey("app", &appConfig); err != nil {
+		logger.ZapLogger.Sugar().Panicf("App config unmarshal error: %v", err)
+		return
+	}
+
+	// 服务监听地址
+	listenAddress = fmt.Sprintf("%s:%d", serverConfig.Host, serverConfig.Port)
+
 	// 服务ID
-	appId := config.Config().GetString("app.id")	// 服务appId
-	serverAddress := util.ServerUtil().GetServerIp()	// 服务地址
-	serverPort := config.Config().GetInt("server.port")	// 服务端口
-	serviceId = fmt.Sprintf("%s-%s:%d", appId, serverAddress, serverPort)
+	serverIp := util.ServerUtil().GetServerIp()	// 服务IP
+	serviceId = fmt.Sprintf("%s-%s:%d", appConfig.Id, serverIp, serverConfig.Port)
 
 	// 网关服务ID
-	serverGatewayPort := config.Config().GetInt("server.gateway.port")	// 服务端口
-	serviceGatewayId = fmt.Sprintf("%s-%s-%s:%d", appId, "gateway", serverAddress, serverGatewayPort)
+	serviceGatewayId = fmt.Sprintf("%s-%s-%s:%d", appConfig.Id, "gateway", serverIp, serverConfig.Gateway.Port)
 }
 
 
 // 运行 Http 服务
 // @param handler http 处理器
 func RunHttpServer(handler http.Handler) {
-	// 服务地址
-	address := server.GetServerAddress()
-
 	httpServer := &http.Server{
-		Addr:         address,
+		Addr:         listenAddress,
 		Handler:      handler,
-		ReadTimeout:  time.Duration(config.Config().GetInt("server.readTimeout")) * time.Millisecond,
-		WriteTimeout: time.Duration(config.Config().GetInt("server.writeTimeout")) * time.Millisecond,
+		ReadTimeout:  time.Duration(serverConfig.ReadTimeout) * time.Millisecond,
+		WriteTimeout: time.Duration(serverConfig.WriteTimeout) * time.Millisecond,
 	}
 
 	// 服务启动成功
-	logger.ZapLogger.Info(fmt.Sprintf("Listening and serving HTTP on %s, PID: %d", address, os.Getpid()))
+	logger.ZapLogger.Info(fmt.Sprintf("Listening and serving HTTP on %s, PID: %d", listenAddress, os.Getpid()))
 
 	go func() {
 		// consul 客户端
@@ -83,24 +96,21 @@ func RunHttpServer(handler http.Handler) {
 
 // 运行 gRPC 服务
 func RunRpcServer(grpcServer *grpc.Server) {
-	// 服务地址
-	address := server.GetServerAddress()
-
 	// 是否在gRPC服务中注册reflection服务, 开启后支持grpcurl命令行工具
-	if config.Config().GetBool("server.grpc.reflection.register") {
+	if serverConfig.Grpc.Reflection.Register {
 		// Register reflection service on gRPC server.
 		reflection.Register(grpcServer)
 	}
 
 	// 监听端口
-	lis, err := net.Listen("tcp", address)
+	lis, err := net.Listen("tcp", listenAddress)
 	if err != nil {
 		logger.ZapLogger.Sugar().Errorf("Server listen error: %v", err)
 		panic("Server listen error: " + err.Error())
 	}
 
 	// 服务启动成功
-	logger.ZapLogger.Info(fmt.Sprintf("Listening and serving gRPC on %s, PID: %d", address, os.Getpid()))
+	logger.ZapLogger.Info(fmt.Sprintf("Listening and serving gRPC on %s, PID: %d", listenAddress, os.Getpid()))
 
 	go func() {
 		// consul 客户端
@@ -128,32 +138,35 @@ func RunRpcServer(grpcServer *grpc.Server) {
 // 运行RPC代理服务
 // @param handler http 处理器
 func RunGatewayServer(handler http.Handler) {
-	// 服务地址
-	address := server.GetGatewayServerAddress()
+	// 网关监听地址
+	gatewayListenAddress := fmt.Sprintf("%s:%d", serverConfig.Gateway.Host, serverConfig.Gateway.Port)
 
 	httpServer := &http.Server{
-		Addr:         address,
+		Addr:         gatewayListenAddress,
 		Handler:      handler,
-		ReadTimeout:  time.Duration(config.Config().GetInt("server.readTimeout")) * time.Millisecond,
-		WriteTimeout: time.Duration(config.Config().GetInt("server.writeTimeout")) * time.Millisecond,
+		ReadTimeout:  time.Duration(serverConfig.Gateway.ReadTimeout) * time.Millisecond,
+		WriteTimeout: time.Duration(serverConfig.Gateway.WriteTimeout) * time.Millisecond,
 	}
 
 	// 启动Http服务器（gRPC服务代理）
-	logger.ZapLogger.Info(fmt.Sprintf("Listening and serving Gateway HTTP on %s, PID: %d", address, os.Getpid()))
+	logger.ZapLogger.Info(fmt.Sprintf("Listening and serving Gateway HTTP on %s, PID: %d", gatewayListenAddress, os.Getpid()))
 
 	go func() {
+		// 服务中心
+		serviceCenterCfg := appConfig.ServiceCenter
+
 		// consul 客户端
 		cfg := consulApi.DefaultConfig()
 		// consul 地址
-		cfg.Address = config.Config().GetString("app.serviceCenter.consul.address")
+		cfg.Address = serviceCenterCfg.Consul.Address
 		consulClient, err := consulApi.NewClient(cfg)
 		if err != nil {
 			logger.ZapLogger.Sugar().Errorf("Consul client initialize error: %v", err)
 		}else{
 			// 服务名称
-			serviceName := config.Config().GetString("app.serviceCenter.register.name")
+			serviceName := serviceCenterCfg.Register.Name
 			if serviceName == "" {
-				serviceName = config.Config().GetString("app.id")
+				serviceName = appConfig.Id
 			}
 
 			// 服务注册信息
@@ -165,14 +178,14 @@ func RunGatewayServer(handler http.Handler) {
 				// 服务地址
 				Address: util.ServerUtil().GetServerIp(),
 				// 服务端口
-				Port: config.Config().GetInt("server.gateway.port"),
+				Port: serverConfig.Gateway.Port,
 			}
 
 			// 服务标签
-			if serviceTags := config.Config().GetStringSlice("app.serviceCenter.register.tags"); serviceTags != nil {
+			if serviceCenterCfg.Register.Tags != nil {
 				var newTags []string
 
-				for _, tagItem := range serviceTags {
+				for _, tagItem := range serviceCenterCfg.Register.Tags {
 					newTags = append(newTags, tagItem + "-gateway")
 				}
 
@@ -180,29 +193,26 @@ func RunGatewayServer(handler http.Handler) {
 			}
 
 			// 健康检查
-			interval := config.Config().GetInt("app.serviceCenter.healthCheck.gateway.interval")
-			timeout := config.Config().GetInt("app.serviceCenter.healthCheck.gateway.timeout")
-			maxLifeTime := config.Config().GetInt("app.serviceCenter.healthCheck.gateway.maxLifeTime")
-			checkAddress := config.Config().GetString("app.serviceCenter.healthCheck.gateway.address")
+			checkAddress := serviceCenterCfg.HealthCheck.Gateway.Address
 			if checkAddress == "" {
-				checkAddress = fmt.Sprintf("http://%s:%d/%s", reg.Address, reg.Port, "health")
+				checkAddress = fmt.Sprintf("%s://%s:%d/%s", serviceCenterCfg.HealthCheck.Gateway.Protocol, reg.Address, reg.Port, serviceCenterCfg.HealthCheck.Gateway.Path)
 			}
 			reg.Check = &consulApi.AgentServiceCheck{
 				// 检测间隔
-				Interval: (time.Millisecond * time.Duration(interval)).String(),
+				Interval: (time.Millisecond * time.Duration(serviceCenterCfg.HealthCheck.Gateway.Interval)).String(),
 				// 检测超时
-				Timeout: (time.Millisecond * time.Duration(timeout)).String(),
+				Timeout: (time.Millisecond * time.Duration(serviceCenterCfg.HealthCheck.Gateway.Timeout)).String(),
 				// 检测地址
 				HTTP: checkAddress,
 				// 检测请求方式
-				Method: config.Config().GetString("app.serviceCenter.healthCheck.gateway.method"),
+				Method: serviceCenterCfg.HealthCheck.Gateway.Method,
 				// 注销时间，服务过期时间
-				DeregisterCriticalServiceAfter: (time.Millisecond * time.Duration(maxLifeTime)).String(),
+				DeregisterCriticalServiceAfter: (time.Millisecond * time.Duration(serviceCenterCfg.HealthCheck.Gateway.MaxLifeTime)).String(),
 			}
 
 			// 检测项名称
-			if checkName := config.Config().GetString("app.serviceCenter.healthCheck.gateway.name"); checkName != "" {
-				reg.Check.Name = checkName
+			if serviceCenterCfg.HealthCheck.Gateway.Name != "" {
+				reg.Check.Name = serviceCenterCfg.HealthCheck.Gateway.Name
 			}
 
 			// 注册网关服务
@@ -242,8 +252,7 @@ func httpServerGraceStop(server *http.Server) {
 	logger.ZapLogger.Info("Shutdown Server ...")
 
 	// 5 秒超时自动取消(当执行一个go 协程时，超时自动取消协程)
-	contextTimeout := config.Config().GetInt("server.contextTimeout")
-	ctx, cancelFunc := context.WithTimeout(context.Background(), time.Duration(contextTimeout)*time.Millisecond)
+	ctx, cancelFunc := context.WithTimeout(context.Background(), time.Duration(serverConfig.ContextTimeout)*time.Millisecond)
 	defer cancelFunc()
 
 	if err := server.Shutdown(ctx); err != nil {
@@ -296,8 +305,7 @@ func gatewayServerGraceStop(server *http.Server) {
 	logger.ZapLogger.Info("Shutdown Server ...")
 
 	// 5 秒超时自动取消(当执行一个go 协程时，超时自动取消协程)
-	contextTimeout := config.Config().GetInt("server.contextTimeout")
-	ctx, cancelFunc := context.WithTimeout(context.Background(), time.Duration(contextTimeout)*time.Millisecond)
+	ctx, cancelFunc := context.WithTimeout(context.Background(), time.Duration(serverConfig.ContextTimeout)*time.Millisecond)
 	defer cancelFunc()
 
 	if err := server.Shutdown(ctx); err != nil {

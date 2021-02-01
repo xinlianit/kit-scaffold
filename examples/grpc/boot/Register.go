@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"gitee.com/jirenyou/business.palm.proto/pb/go/service"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+	"github.com/xinlianit/kit-scaffold/config"
 	"github.com/xinlianit/kit-scaffold/examples/grpc/app/server"
 	"github.com/xinlianit/kit-scaffold/logger"
-	serverScaffold "github.com/xinlianit/kit-scaffold/server"
 	"google.golang.org/grpc"
 )
 
@@ -25,6 +25,9 @@ func RegisterRpcServer(rpcServer *grpc.Server) *grpc.Server {
 // @param endpoint RPC服务连接地址
 // @param opts RPC服务连接参数
 func RegisterGatewayServer(ctx context.Context, mux *runtime.ServeMux) *runtime.ServeMux {
+	// 连接点
+	endpoint := fmt.Sprintf("%s:%d", config.Config().GetString("server.host"), config.Config().GetInt("server.port"))
+
 	// todo 连接参数
 	opts := []grpc.DialOption{
 		// 不启用TLS的认证
@@ -32,7 +35,7 @@ func RegisterGatewayServer(ctx context.Context, mux *runtime.ServeMux) *runtime.
 	}
 
 	// 商家信息
-	if err := service.RegisterBusinessInfoServiceHandlerFromEndpoint(ctx, mux, serverScaffold.GetServerAddress(), opts); err != nil {
+	if err := service.RegisterBusinessInfoServiceHandlerFromEndpoint(ctx, mux, endpoint, opts); err != nil {
 		errMsg := fmt.Sprintf("Gateway server register error: %v", err)
 		logger.ZapLogger.Error(errMsg)
 		panic(errMsg)

@@ -79,6 +79,10 @@ app:
         method: GET
         # 最大生存周期（单位：毫秒）
         maxLifeTime: 5000
+        # 请求协议
+        protocol: http
+        # 健康检测路径
+        path: health
         # 健康检查地址
         address: 172.30.202.190:8080/businessInfo/getBusinessInfo
 

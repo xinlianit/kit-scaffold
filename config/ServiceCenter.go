@@ -43,6 +43,8 @@ type HealthCheck struct{
 		Timeout int `json:"timeout"`
 		Method string `json:"method"`
 		MaxLifeTime int `json:"max_life_time"`
+		Protocol string `json:"protocol"`
+		Path string `json:"path"`
 		Address string `json:"address"`
 	} `json:"gateway"`
 }
