@@ -11,10 +11,19 @@ import (
 
 // 创建Consul客户端
 func NewConsulClient() ConsulClient {
+	// consul 地址
+	address := config.Config().GetString("app.serviceCenter.consul.address")
+	if host := config.Config().GetString("consul.host"); host != "" {
+		address = host
+		if port := config.Config().GetInt("consul.port"); port != 0 {
+			address = fmt.Sprintf("%s:%d", address, port)
+		}
+	}
+
 	// consul 配置
 	cfg := consulApi.DefaultConfig()
 	// consul 地址
-	cfg.Address = config.Config().GetString("app.serviceCenter.consul.address")
+	cfg.Address = address
 
 	// 创建客户端
 	client, err := consulApi.NewClient(cfg)

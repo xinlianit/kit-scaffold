@@ -18,6 +18,14 @@ func Init() {
 	var baseFields []zap.Field
 	logger.ZapLogger = logger.ZapInit(logger.NewDefaultZapConfig(), baseFields)
 
+	// 服务注册发现
+
+	// 初始化故障转移
+	//breaker.Init()
+}
+
+// 配置中心初始化
+func ConfigCenterInit()  {
 	// 配置中心
 	configCenterEnable := config.Config().GetBool("app.configCenter.enable")
 	if configCenterEnable {
@@ -31,11 +39,6 @@ func Init() {
 			nacosConfig()
 		}
 	}
-
-	// 服务注册发现
-
-	// 初始化故障转移
-	//breaker.Init()
 }
 
 // nacos 配置中心

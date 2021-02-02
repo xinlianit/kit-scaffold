@@ -17,6 +17,7 @@ var (
 	nacosClientUtil *util.Nacos
 	err             error
 	once            sync.Once
+	group string
 	configSyncDir   string       // 配置同步目录
 	nacosConfig     config.Nacos // Nacos 配置
 )
@@ -72,8 +73,11 @@ func Init() {
 			panic(err)
 		}
 
-		defaultGroup := config.Config().GetString("app.configCenter.nacosDefaultGroup")
-		nacosClientUtil = util.NacosUtil().WithConfigClient(configClient).WithNamingClient(namingClient).Group(defaultGroup)
+		// nacos 分组
+		if group = config.Config().GetString("app.configCenter.nacosGroup"); group == "" {
+			group = strings.ToUpper(config.Config().GetString("env"))
+		}
+		nacosClientUtil = util.NacosUtil().WithConfigClient(configClient).WithNamingClient(namingClient).Group(group)
 	})
 }
 
@@ -89,7 +93,7 @@ func ListenSyncConfig() {
 	configFileList := strings.Split(syncDataIds, ",")
 	for _, configFile := range configFileList {
 		// 获取配置到文件
-		getConfigToFile(config.Config().GetString("app.configCenter.nacosDefaultGroup"), configFile)
+		getConfigToFile(group, configFile)
 
 		// 监听配置
 		NacosClientUtil().ListenConfig(configFile, syncConfigToFile)

@@ -28,22 +28,15 @@ var (
 func init() {
 	// 框架初始化
 	boot.Init()
-
-	//serverPort := config.Config().GetInt("server.port")
-	serverGatewayPort := config.Config().GetInt("server.gateway.port")
-
-	// 服务ID todo bug
-	serverIp := util.ServerUtil().GetServerIp()	// 服务IP
-	serviceId = fmt.Sprintf("%s-%s:%d", config.AppConfig.Id, serverIp, serverPort)
-
-	// 网关服务ID todo bug
-	serviceGatewayId = fmt.Sprintf("%s-%s-%s:%d", config.AppConfig.Id, "gateway", serverIp, serverGatewayPort)
 }
 
 
 // 运行 Http 服务
 // @param handler http 处理器
 func RunHttpServer(handler http.Handler) {
+	// 配置中心初始化
+	boot.ConfigCenterInit()
+
 	// 服务监听地址
 	listenAddress := fmt.Sprintf("%s:%d", config.Config().GetString("server.host"), config.Config().GetInt("server.port"))
 
@@ -87,6 +80,9 @@ func RunHttpServer(handler http.Handler) {
 
 // 运行 gRPC 服务
 func RunRpcServer(grpcServer *grpc.Server) {
+	// 配置中心初始化
+	boot.ConfigCenterInit()
+
 	// 服务监听地址
 	listenAddress := fmt.Sprintf("%s:%d", config.Config().GetString("server.host"), config.Config().GetInt("server.port"))
 
@@ -136,7 +132,10 @@ func RunRpcServer(grpcServer *grpc.Server) {
 // @param handler http 处理器
 func RunGatewayServer(handler http.Handler) {
 	// 网关监听地址
-	gatewayListenAddress := fmt.Sprintf("%s:%d", config.Config().GetString("server.gateway.host"), config.Config().GetInt("server.gateway.port"))
+	gatewayListenAddress := fmt.Sprintf("%s:%d",
+		config.Config().GetString("server.gateway.host"),
+		config.Config().GetInt("server.gateway.port"),
+		)
 
 	httpServer := &http.Server{
 		Addr:         gatewayListenAddress,
@@ -149,6 +148,14 @@ func RunGatewayServer(handler http.Handler) {
 	logger.ZapLogger.Info(fmt.Sprintf("Listening and serving Gateway HTTP on %s, PID: %d", gatewayListenAddress, os.Getpid()))
 
 	go func() {
+		// 服务注册ID
+		serviceGatewayRegisterId = fmt.Sprintf("%s-%s-%s:%d",
+			config.AppConfig.Id,
+			"gateway",
+			util.ServerUtil().GetServerIp(),
+			config.Config().GetInt("server.port"),
+		)
+
 		// 服务中心
 		serviceCenterCfg := config.AppConfig.ServiceCenter
 
@@ -169,7 +176,7 @@ func RunGatewayServer(handler http.Handler) {
 			// 服务注册信息
 			reg := &consulApi.AgentServiceRegistration{
 				// 服务ID
-				ID: serviceGatewayId,
+				ID: serviceGatewayRegisterId,
 				// 服务名称
 				Name: serviceName + "-gateway",
 				// 服务地址
@@ -223,7 +230,7 @@ func RunGatewayServer(handler http.Handler) {
 			logger.ZapLogger.Sugar().Errorf("Gateway server run error: %v", err)
 
 			// 注销网关服务
-			if deregisterErr := consulClient.Agent().ServiceDeregister(serviceGatewayId); deregisterErr != nil {
+			if deregisterErr := consulClient.Agent().ServiceDeregister(serviceGatewayRegisterId); deregisterErr != nil {
 				logger.ZapLogger.Sugar().Errorf("Service deregister error from consul: %v", deregisterErr)
 			}
 
@@ -257,7 +264,7 @@ func httpServerGraceStop(server *http.Server) {
 	}
 
 	// 服务注销
-	if deregisterErr := drive.NewConsulClient().DeregisterService(serviceId); deregisterErr != nil {
+	if deregisterErr := drive.NewConsulClient().DeregisterService(serviceRegisterId); deregisterErr != nil {
 		logger.ZapLogger.Sugar().Errorf("Service deregister error from consul: %v", deregisterErr)
 	}
 
@@ -280,7 +287,7 @@ func gRpcServerGraceStop(server *grpc.Server) {
 	logger.ZapLogger.Info("Shutdown Server ...")
 
 	// 服务注销
-	if deregisterErr := drive.NewConsulClient().DeregisterService(serviceId); deregisterErr != nil {
+	if deregisterErr := drive.NewConsulClient().DeregisterService(serviceRegisterId); deregisterErr != nil {
 		logger.ZapLogger.Sugar().Errorf("Service deregister error from consul: %v", deregisterErr)
 	}
 
@@ -310,7 +317,7 @@ func gatewayServerGraceStop(server *http.Server) {
 	}
 
 	// 服务注销
-	if deregisterErr := drive.NewConsulClient().DeregisterService(serviceGatewayId); deregisterErr != nil {
+	if deregisterErr := drive.NewConsulClient().DeregisterService(serviceGatewayRegisterId); deregisterErr != nil {
 		logger.ZapLogger.Sugar().Errorf("Service deregister error from consul: %v", deregisterErr)
 	}
 

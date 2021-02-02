@@ -12,6 +12,7 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.2 // indirect
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
 	github.com/hashicorp/consul/api v1.8.1
+	github.com/jinzhu/copier v0.2.3 // indirect
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
 	github.com/nacos-group/nacos-sdk-go v1.0.3
 	github.com/shirou/gopsutil v3.20.12+incompatible // indirect

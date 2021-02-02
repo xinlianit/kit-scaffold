@@ -13,6 +13,8 @@ app:
     type: nacos
     # 同步配置文件列表
     syncConfigDataIds: application.yml,datasource.yml,mail.yml
+    # nacos 分组
+    #nacosGroup: DEV
     # 动态配置缓存目录
     configCacheDir: runtime/cache/config
 

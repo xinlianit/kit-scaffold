@@ -13,19 +13,12 @@ var (
 
 // 初始化默认值
 func init() {
-	envVal := common.GetEnv("APP_ENV", constant.EnvPrd)
-	env, ok := envVal.(string)
-	if !ok {
-		env = constant.EnvPrd
-	} else {
-		env = strings.ToUpper(env)
-	}
-
 	// todo 添加配置默认项
 	Default = make(map[string]interface{})
 
 	// 环境变量
-	Default["APP_ENV"] = env // 环境；DEV-开发、TEST-测试、PRE-预览、PRD-生产
+	defaultEnv := strings.ToUpper(constant.EnvPrd)
+	Default["env"] = defaultEnv // 环境；DEV-开发、TEST-测试、PRE-预览、PRD-生产
 
 	// 服务
 	Default["server.host"] = "0.0.0.0"                // 服务地址
@@ -61,7 +54,6 @@ func init() {
 	// 配置中心
 	Default["app.configCenter.enable"] = false                                                  // 是否启用配置中心; true-启用、false-关闭
 	Default["app.configCenter.type"] = "nacos"                                                  // 配置中心类型
-	Default["app.configCenter.nacosDefaultGroup"] = env                                         // nacos 默认分组
 	Default["app.configCenter.configCacheDir"] = filepath.Join(common.GetCachePath(), "config") // 动态配置缓存目录
 
 	// 服务中心

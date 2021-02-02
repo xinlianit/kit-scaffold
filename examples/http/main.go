@@ -9,11 +9,14 @@ import (
 	"github.com/xinlianit/kit-scaffold/examples/http/middleware"
 	"github.com/xinlianit/kit-scaffold/examples/http/transport"
 	"github.com/xinlianit/kit-scaffold/handler"
+	"log"
 	"net/http"
 )
 
 func main() {
 	commandLineParse()
+
+	log.Printf("------env: %v", config.Config().GetString("env"))
 
 	httpHandler := NewHttpHandler()
 
@@ -24,8 +27,17 @@ func main() {
 // 命令行解析
 func commandLineParse() {
 	// 解析命令行参数
+	pflag.String("env", "PRD","环境名称")
 	pflag.String("server.host", "0.0.0.0", "服务地址")
 	pflag.Int("server.port", 80, "服务端口")
+	pflag.String("server.gateway.host", "0.0.0.0", "网关地址")
+	pflag.Int("server.gateway.port", 8080, "网关端口")
+	pflag.String("app.id", "", "应用ID")
+	pflag.String("nacos.host", "", "Nacos主机")
+	pflag.Int("nacos.port", 0, "Nacos端口")
+	pflag.String("nacos.namespace", "", "Nacos名称空间")
+	pflag.String("consul.host", "", "Consul主机")
+	pflag.Int("consul.port", 0, "Consul端口")
 	pflag.Parse()
 	config.Config().BindPFlags(pflag.CommandLine)
 }
