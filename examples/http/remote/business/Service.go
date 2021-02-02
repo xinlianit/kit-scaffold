@@ -1,10 +1,12 @@
 package business
 
 import (
+	"context"
 	"gitee.com/jirenyou/business.palm.proto/pb/go/service"
 	"github.com/xinlianit/kit-scaffold/examples/http/remote/business/credential"
 	"github.com/xinlianit/kit-scaffold/examples/http/remote/business/interceptor"
 	"google.golang.org/grpc"
+	"time"
 )
 
 var (
@@ -31,9 +33,14 @@ func connect() *grpc.ClientConn {
 		grpc.WithChainUnaryInterceptor(interceptors...),
 	}
 
+	// 上下文
+	ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond * 1000)
+	defer cancel()
+
 	// 创建连接
 	serverAddress := "127.0.0.1:8080"
-	conn, err = grpc.Dial(serverAddress, dialOptions...)
+	//conn, err = grpc.Dial(serverAddress, dialOptions...)
+	conn, err = grpc.DialContext(ctx, serverAddress, dialOptions...)
 
 	if err != nil {
 		panic(err)

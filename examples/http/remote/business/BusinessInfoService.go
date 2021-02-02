@@ -13,11 +13,11 @@ type businessInfoService struct {
 	client service.BusinessInfoServiceClient
 }
 
-func (s businessInfoService) GetBusinessInfo() (*response.GetBusinessInfoResponse, error) {
+func (s businessInfoService) GetBusinessInfo(ctx context.Context) (*response.GetBusinessInfoResponse, error) {
 	req := &request.GetBusinessInfoRequest{
 		BusinessId: 99,
 	}
-	rsp, err := s.client.GetBusinessInfo(context.Background(), req)
+	rsp, err := s.client.GetBusinessInfo(ctx, req)
 
 	if err != nil {
 		if rsp, ok := status.FromError(err); ok {

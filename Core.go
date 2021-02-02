@@ -21,30 +21,32 @@ import (
 
 // 服务ID
 var (
- 	serviceId string
- 	serviceGatewayId string
- 	listenAddress string
+	serviceRegisterId string
+ 	serviceGatewayRegisterId string
 )
 
 func init() {
 	// 框架初始化
 	boot.Init()
 
-	// 服务监听地址
-	listenAddress = fmt.Sprintf("%s:%d", config.ServerConfig.Host, config.ServerConfig.Port)
+	//serverPort := config.Config().GetInt("server.port")
+	serverGatewayPort := config.Config().GetInt("server.gateway.port")
 
-	// 服务ID
+	// 服务ID todo bug
 	serverIp := util.ServerUtil().GetServerIp()	// 服务IP
-	serviceId = fmt.Sprintf("%s-%s:%d", config.AppConfig.Id, serverIp, config.ServerConfig.Port)
+	serviceId = fmt.Sprintf("%s-%s:%d", config.AppConfig.Id, serverIp, serverPort)
 
-	// 网关服务ID
-	serviceGatewayId = fmt.Sprintf("%s-%s-%s:%d", config.AppConfig.Id, "gateway", serverIp, config.ServerConfig.Gateway.Port)
+	// 网关服务ID todo bug
+	serviceGatewayId = fmt.Sprintf("%s-%s-%s:%d", config.AppConfig.Id, "gateway", serverIp, serverGatewayPort)
 }
 
 
 // 运行 Http 服务
 // @param handler http 处理器
 func RunHttpServer(handler http.Handler) {
+	// 服务监听地址
+	listenAddress := fmt.Sprintf("%s:%d", config.Config().GetString("server.host"), config.Config().GetInt("server.port"))
+
 	httpServer := &http.Server{
 		Addr:         listenAddress,
 		Handler:      handler,
@@ -56,11 +58,14 @@ func RunHttpServer(handler http.Handler) {
 	logger.ZapLogger.Info(fmt.Sprintf("Listening and serving HTTP on %s, PID: %d", listenAddress, os.Getpid()))
 
 	go func() {
+		// 服务注册ID
+		serviceRegisterId = fmt.Sprintf("%s-%s:%d", config.AppConfig.Id, util.ServerUtil().GetServerIp(), config.Config().GetInt("server.port"))
+
 		// consul 客户端
 		consulClient := drive.NewConsulClient()
 
 		// 服务注册
-		if err := consulClient.RegisterService(serviceId); err != nil {
+		if err := consulClient.RegisterService(serviceRegisterId); err != nil {
 			logger.ZapLogger.Sugar().Errorf("Server register to consul error: %v", err)
 		}
 
@@ -69,7 +74,7 @@ func RunHttpServer(handler http.Handler) {
 			logger.ZapLogger.Sugar().Errorf("Server run error: %v", err)
 
 			// 服务注销
-			if deregisterErr := consulClient.DeregisterService(serviceId); deregisterErr != nil {
+			if deregisterErr := consulClient.DeregisterService(serviceRegisterId); deregisterErr != nil {
 				logger.ZapLogger.Sugar().Errorf("Service deregister error from consul: %v", deregisterErr)
 			}
 
@@ -82,6 +87,9 @@ func RunHttpServer(handler http.Handler) {
 
 // 运行 gRPC 服务
 func RunRpcServer(grpcServer *grpc.Server) {
+	// 服务监听地址
+	listenAddress := fmt.Sprintf("%s:%d", config.Config().GetString("server.host"), config.Config().GetInt("server.port"))
+
 	// 是否在gRPC服务中注册reflection服务, 开启后支持grpcurl命令行工具
 	if config.ServerConfig.Grpc.Reflection.Register {
 		// Register reflection service on gRPC server.
@@ -99,18 +107,21 @@ func RunRpcServer(grpcServer *grpc.Server) {
 	logger.ZapLogger.Info(fmt.Sprintf("Listening and serving gRPC on %s, PID: %d", listenAddress, os.Getpid()))
 
 	go func() {
+		// 服务注册ID
+		serviceRegisterId = fmt.Sprintf("%s-%s:%d", config.AppConfig.Id, util.ServerUtil().GetServerIp(), config.Config().GetInt("server.port"))
+
 		// consul 客户端
 		consulClient := drive.NewConsulClient()
 
 		// 服务注册
-		if err := consulClient.RegisterService(serviceId); err != nil {
+		if err := consulClient.RegisterService(serviceRegisterId); err != nil {
 			logger.ZapLogger.Sugar().Errorf("Server register to consul error: %v", err)
 		}
 
 		// 启动服务
 		if err := grpcServer.Serve(lis); err != nil {
 			// 注销服务
-			if deregisterErr := consulClient.DeregisterService(serviceId); deregisterErr != nil {
+			if deregisterErr := consulClient.DeregisterService(serviceRegisterId); deregisterErr != nil {
 				logger.ZapLogger.Sugar().Errorf("Service deregister error from consul: %v", deregisterErr)
 			}
 
@@ -125,7 +136,7 @@ func RunRpcServer(grpcServer *grpc.Server) {
 // @param handler http 处理器
 func RunGatewayServer(handler http.Handler) {
 	// 网关监听地址
-	gatewayListenAddress := fmt.Sprintf("%s:%d", config.ServerConfig.Gateway.Host, config.ServerConfig.Gateway.Port)
+	gatewayListenAddress := fmt.Sprintf("%s:%d", config.Config().GetString("server.gateway.host"), config.Config().GetInt("server.gateway.port"))
 
 	httpServer := &http.Server{
 		Addr:         gatewayListenAddress,

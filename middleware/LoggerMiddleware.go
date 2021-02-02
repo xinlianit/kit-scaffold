@@ -6,7 +6,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/xinlianit/go-util"
 	"github.com/xinlianit/kit-scaffold/common"
-	"github.com/xinlianit/kit-scaffold/config"
 	"github.com/xinlianit/kit-scaffold/logger"
 	"go.uber.org/zap"
 )
@@ -63,7 +62,7 @@ var logFields = struct {
 // 日志中间件
 func LoggerMiddleware(next endpoint.Endpoint) endpoint.Endpoint {
 	// 访问日志记录
-	if !config.Config().GetBool("logger.access.enable") {
+	if !logger.Config.Access.Enable {
 		return next
 	}
 
@@ -129,8 +128,7 @@ func receiveAndRecordLog() {
 	// 日志基础字段
 	var baseFields []zap.Field
 
-	accessLogFile := config.Config().GetString("logger.access.logFile")
-	accessLogger := logger.NewLoggerOfZap(accessLogFile, zapConfig, baseFields)
+	accessLogger := logger.NewLoggerOfZap(logger.Config.Access.LogFile, zapConfig, baseFields)
 
 	for log := range logChannel {
 		// 日志字段

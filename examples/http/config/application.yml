@@ -18,12 +18,70 @@ app:
 
   # 服务中心
   serviceCenter:
-    # 服务中心类型: etcd、consul、nacos
-    type: etcd
-    # 服务中心地址, 多个用英文逗号","隔开
-    address: 39.100.153.72:2379
-    #address: 39.100.153.72:8848
+    # 服务中心类型: consul、etcd、nacos
+    type: consul
+    # consul 配置
+    consul:
+      # 服务中心地址, 多个用英文逗号","隔开
+      address: 39.100.153.72:8500
     # 服务注册
     register:
       # 是否注册服务; true-是、false-否
       enable: true
+      # 服务名称
+      name: kit-scaffold.palm.grpc.api
+      # 服务标签
+      tags: [tag_1,tag_2]
+    # 健康检测
+    healthCheck:
+      # 是否启用健康检查；true-是、false-否
+      enable: true
+      # 检查类型; http、grpc、tcp
+      type: http
+      # 检测ID
+      #id:
+      # 检测名称
+      #name:
+      # 检测间隔（单位：毫秒）
+      interval: 3000
+      # 检查超时（单位：毫秒）
+      timeout: 1000
+      # 最大生存周期（单位：毫秒）
+      maxLifeTime: 5000
+      # 请求协议
+      protocol: http
+      # 健康检测路径
+      path: health
+      # 健康检测地址
+      address: 172.30.202.190:8080
+      # http 检测
+      http:
+        # 关闭tls验证
+        tlsSkipVerify: true
+        # 请求协议
+        method: GET
+      # gRPC 检测
+      grpc:
+        # TLS
+        tls:
+          # 是否启用 TLS
+          enable: false
+
+      # gateway 检测
+      gateway:
+        # 检查项名称
+        #name: gateway 网关服务健康状态检测
+        # 检测间隔（单位：毫秒）
+        interval: 3000
+        # 检查超时（单位：毫秒）
+        timeout: 1000
+        # 请求方式
+        method: GET
+        # 最大生存周期（单位：毫秒）
+        maxLifeTime: 5000
+        # 请求协议
+        protocol: http
+        # 健康检测路径
+        path: health
+        # 健康检查地址
+        address: 172.30.202.190:8080/businessInfo/getBusinessInfo

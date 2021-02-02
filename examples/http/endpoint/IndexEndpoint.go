@@ -21,7 +21,7 @@ func (e IndexEndpoint) Hello(ctx context.Context, request interface{}) (response
 	businessInfoService := business.NewBusinessInfoService()
 	defer business.Close()
 
-	result, err := businessInfoService.GetBusinessInfo()
+	result, err := businessInfoService.GetBusinessInfo(ctx)
 
 	if err != nil {
 		log.Printf("RPC 逻辑错误: %v", err)

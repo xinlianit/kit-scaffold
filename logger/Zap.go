@@ -32,13 +32,13 @@ type ZapConfig struct {
 func NewDefaultZapConfig() ZapConfig {
 	// 日志切割类型
 	rotateType := util.RotateTypeDate
-	if loggerConfig.Rotate.Type == "size" {
+	if Config.Rotate.Type == "size" {
 		rotateType = util.RotateTypeSize
 	}
 
 	// 最低日志级别
 	lowestLevel := zapcore.DebugLevel
-	switch loggerConfig.LowestLevel {
+	switch Config.LowestLevel {
 	case "info":
 		lowestLevel = zapcore.InfoLevel
 	case "warn":
@@ -54,18 +54,18 @@ func NewDefaultZapConfig() ZapConfig {
 	}
 
 	return ZapConfig{
-		RotateEnable:     loggerConfig.Rotate.Enable,
+		RotateEnable:     Config.Rotate.Enable,
 		RotateType:       rotateType,
-		MaxSize:          loggerConfig.Rotate.Size.MaxSize,
-		MaxBackups:       loggerConfig.Rotate.Size.MaxBackups,
-		Compress:         loggerConfig.Rotate.Size.Compress,
-		Extend:           loggerConfig.Rotate.Date.Extend,
-		MaxAge:           loggerConfig.MaxAge,
-		LogFile:          loggerConfig.RuntimeLogFile,
-		ErrorLogFile:     loggerConfig.ErrorLogFile,
+		MaxSize:          Config.Rotate.Size.MaxSize,
+		MaxBackups:       Config.Rotate.Size.MaxBackups,
+		Compress:         Config.Rotate.Size.Compress,
+		Extend:           Config.Rotate.Date.Extend,
+		MaxAge:           Config.MaxAge,
+		LogFile:          Config.RuntimeLogFile,
+		ErrorLogFile:     Config.ErrorLogFile,
 		LowestLevel:      lowestLevel,
-		RecordLineNumber: loggerConfig.RecordLineNumber,
-		LogFormatter:     loggerConfig.LogFormatter,
+		RecordLineNumber: Config.RecordLineNumber,
+		LogFormatter:     Config.LogFormatter,
 	}
 }
 
