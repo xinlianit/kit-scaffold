@@ -9,6 +9,7 @@ import (
 	"github.com/xinlianit/kit-scaffold/logger"
 	"go.uber.org/zap"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"sync"
 )
@@ -31,16 +32,58 @@ func Init() {
 		// 解析配置到结构
 		config.Config().UnmarshalKey("nacos", &nacosConfig)
 
+		// 命令行指定地址
+		var ipAddrSlice []string
+		var portSlice []uint64
+		// nacos 地址
+		if address := config.Config().GetString("nacos.address"); address != "" {
+			if addressSlice := strings.Split(address, ","); addressSlice != nil {
+				for _, address := range addressSlice {
+					ipPort := strings.Split(address, ":")
+
+					ipAddrSlice = append(ipAddrSlice, ipPort[0])
+
+					if len(ipPort) == 2 {
+						port, _ := strconv.ParseUint(ipPort[1], 10, 64)
+						portSlice = append(portSlice, port)
+					}else{
+						portSlice = append(portSlice, 80)
+					}
+				}
+			}
+		}
+
 		//配置中心服务端配置
 		var serverConfigs []constant.ServerConfig
-		for _, cfg := range nacosConfig.ServerConfig {
-			serverConfig := constant.ServerConfig{
-				Scheme:      cfg.Scheme,
-				ContextPath: cfg.ContextPath,
-				IpAddr:      cfg.IpAddr,
-				Port:        cfg.Port,
+
+		if ipAddrSlice != nil {
+			// 命令行参数
+			var scheme, contextPath string
+			if len(nacosConfig.ServerConfig) > 0 {
+				scheme = nacosConfig.ServerConfig[0].Scheme
+				contextPath = nacosConfig.ServerConfig[0].ContextPath
 			}
-			serverConfigs = append(serverConfigs, serverConfig)
+
+			for i, host := range ipAddrSlice {
+				serverConfig := constant.ServerConfig{
+					Scheme:      scheme,
+					ContextPath: contextPath,
+					IpAddr:      host,
+					Port:        portSlice[i],
+				}
+				serverConfigs = append(serverConfigs, serverConfig)
+			}
+		}else{
+			// 配置文件
+			for _, cfg := range nacosConfig.ServerConfig {
+				serverConfig := constant.ServerConfig{
+					Scheme:      cfg.Scheme,
+					ContextPath: cfg.ContextPath,
+					IpAddr:      cfg.IpAddr,
+					Port:        cfg.Port,
+				}
+				serverConfigs = append(serverConfigs, serverConfig)
+			}
 		}
 
 		// 配置中心客户端配置
