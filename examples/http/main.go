@@ -30,10 +30,9 @@ func commandLineParse() {
 	pflag.Int("server.port", 80, "服务端口")
 	pflag.String("server.gateway.host", "0.0.0.0", "网关地址")
 	pflag.Int("server.gateway.port", 8080, "网关端口")
-	pflag.String("nacos.address", "", "Nacos地址") // TODO: 待启用
-	pflag.String("nacos.namespace", "", "Nacos名称空间") // TODO: 待启用
-	pflag.String("consul.host", "", "Consul主机") // TODO: 待启用
-	pflag.Int("consul.port", 0, "Consul端口") // TODO: 待启用
+	pflag.String("nacos.address", "", "Nacos地址")
+	pflag.String("nacos.namespace", "", "Nacos名称空间")
+	pflag.String("consul.address", "", "Consul地址")
 	pflag.Parse()
 	config.Config().BindPFlags(pflag.CommandLine)
 }

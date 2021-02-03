@@ -12,12 +12,9 @@ import (
 // 创建Consul客户端
 func NewConsulClient() ConsulClient {
 	// consul 地址
-	address := config.Config().GetString("app.serviceCenter.consul.address")
-	if host := config.Config().GetString("consul.host"); host != "" {
-		address = host
-		if port := config.Config().GetInt("consul.port"); port != 0 {
-			address = fmt.Sprintf("%s:%d", address, port)
-		}
+	var address string
+	if address = config.Config().GetString("consul.address"); address == "" {
+		address = config.Config().GetString("app.serviceCenter.consul.address")
 	}
 
 	// consul 配置

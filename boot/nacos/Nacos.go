@@ -145,7 +145,11 @@ func ListenSyncConfig() {
 
 // 获取配置到文件
 func getConfigToFile(group string, dataId string) {
-	namespace := config.Config().GetString("nacos.clientConfig.namespaceId")
+	// 名称空间
+	var namespace string
+	if namespace = config.Config().GetString("nacos.namespace"); namespace == "" {
+		namespace = config.Config().GetString("nacos.clientConfig.namespaceId")
+	}
 
 	// 配置目录检测
 	if !util.FileUtil().FileExist(configSyncDir) {
