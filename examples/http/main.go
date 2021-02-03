@@ -4,7 +4,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/spf13/pflag"
 	scaffold "github.com/xinlianit/kit-scaffold"
-	"github.com/xinlianit/kit-scaffold/config"
 	"github.com/xinlianit/kit-scaffold/examples/http/endpoint"
 	"github.com/xinlianit/kit-scaffold/examples/http/middleware"
 	"github.com/xinlianit/kit-scaffold/examples/http/transport"
@@ -13,7 +12,8 @@ import (
 )
 
 func main() {
-	commandLineParse()
+	// 初始化命令行
+	//commandLineInit()
 
 	httpHandler := NewHttpHandler()
 
@@ -21,20 +21,13 @@ func main() {
 	scaffold.RunHttpServer(httpHandler)
 }
 
-// 命令行解析
-// TODO: 封装到框架层
-func commandLineParse() {
-	// 解析命令行参数
-	pflag.String("env", "PRD","环境名称")
-	pflag.String("server.host", "0.0.0.0", "服务地址")
-	pflag.Int("server.port", 80, "服务端口")
-	pflag.String("server.gateway.host", "0.0.0.0", "网关地址")
-	pflag.Int("server.gateway.port", 8080, "网关端口")
-	pflag.String("nacos.address", "", "Nacos地址")
-	pflag.String("nacos.namespace", "", "Nacos名称空间")
-	pflag.String("consul.address", "", "Consul地址")
-	pflag.Parse()
-	config.Config().BindPFlags(pflag.CommandLine)
+// 命令行初始化
+func commandLineInit() {
+	// 命令行参数
+	pflag.String("test.app.id", "","测试APP_ID")
+
+	// 命令行解析
+	scaffold.CommandLineParse()
 }
 
 func NewHttpHandler() http.Handler {

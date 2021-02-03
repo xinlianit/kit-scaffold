@@ -4,10 +4,11 @@ import (
 	"context"
 	"fmt"
 	consulApi "github.com/hashicorp/consul/api"
+	"github.com/spf13/pflag"
 	"github.com/xinlianit/go-util"
 	"github.com/xinlianit/kit-scaffold/boot"
+	"github.com/xinlianit/kit-scaffold/boot/consul"
 	"github.com/xinlianit/kit-scaffold/config"
-	"github.com/xinlianit/kit-scaffold/drive"
 	"github.com/xinlianit/kit-scaffold/logger"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -15,12 +16,14 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 	"time"
 )
 
 // 服务ID
 var (
+ 	commandLineOnce sync.Once
 	serviceRegisterId string
  	serviceGatewayRegisterId string
 )
@@ -28,12 +31,39 @@ var (
 func init() {
 	// 框架初始化
 	boot.Init()
+
+	// 命令行初始化
+	commandLineInit()
+}
+
+// 命令行初始化
+func commandLineInit() {
+	// 命令行参数
+	pflag.String("env", "PRD","环境名称")
+	pflag.String("server.host", "0.0.0.0", "服务地址")
+	pflag.Int("server.port", 80, "服务端口")
+	pflag.String("server.gateway.host", "0.0.0.0", "网关地址")
+	pflag.Int("server.gateway.port", 8080, "网关端口")
+	pflag.String("nacos.address", "", "Nacos地址")
+	pflag.String("nacos.namespace", "", "Nacos名称空间")
+	pflag.String("consul.address", "", "Consul地址")
+}
+
+// 命令行参数解析
+func CommandLineParse()  {
+	commandLineOnce.Do(func() {
+		pflag.Parse()
+		config.Config().BindPFlags(pflag.CommandLine)
+	})
 }
 
 
 // 运行 Http 服务
 // @param handler http 处理器
 func RunHttpServer(handler http.Handler) {
+	// 命令行参数解析
+	CommandLineParse()
+
 	// 配置中心初始化
 	boot.ConfigCenterInit()
 
@@ -55,7 +85,7 @@ func RunHttpServer(handler http.Handler) {
 		serviceRegisterId = fmt.Sprintf("%s-%s:%d", config.AppConfig.Id, util.ServerUtil().GetServerIp(), config.Config().GetInt("server.port"))
 
 		// consul 客户端
-		consulClient := drive.NewConsulClient()
+		consulClient := consul.NewConsulClient()
 
 		// 服务注册
 		if err := consulClient.RegisterService(serviceRegisterId); err != nil {
@@ -80,6 +110,9 @@ func RunHttpServer(handler http.Handler) {
 
 // 运行 gRPC 服务
 func RunRpcServer(grpcServer *grpc.Server) {
+	// 命令行参数解析
+	CommandLineParse()
+
 	// 配置中心初始化
 	boot.ConfigCenterInit()
 
@@ -107,7 +140,7 @@ func RunRpcServer(grpcServer *grpc.Server) {
 		serviceRegisterId = fmt.Sprintf("%s-%s:%d", config.AppConfig.Id, util.ServerUtil().GetServerIp(), config.Config().GetInt("server.port"))
 
 		// consul 客户端
-		consulClient := drive.NewConsulClient()
+		consulClient := consul.NewConsulClient()
 
 		// 服务注册
 		if err := consulClient.RegisterService(serviceRegisterId); err != nil {
@@ -131,6 +164,9 @@ func RunRpcServer(grpcServer *grpc.Server) {
 // 运行RPC代理服务
 // @param handler http 处理器
 func RunGatewayServer(handler http.Handler) {
+	// 命令行参数解析
+	CommandLineParse()
+
 	// 网关监听地址
 	gatewayListenAddress := fmt.Sprintf("%s:%d",
 		config.Config().GetString("server.gateway.host"),
@@ -264,7 +300,7 @@ func httpServerGraceStop(server *http.Server) {
 	}
 
 	// 服务注销
-	if deregisterErr := drive.NewConsulClient().DeregisterService(serviceRegisterId); deregisterErr != nil {
+	if deregisterErr := consul.NewConsulClient().DeregisterService(serviceRegisterId); deregisterErr != nil {
 		logger.ZapLogger.Sugar().Errorf("Service deregister error from consul: %v", deregisterErr)
 	}
 
@@ -287,7 +323,7 @@ func gRpcServerGraceStop(server *grpc.Server) {
 	logger.ZapLogger.Info("Shutdown Server ...")
 
 	// 服务注销
-	if deregisterErr := drive.NewConsulClient().DeregisterService(serviceRegisterId); deregisterErr != nil {
+	if deregisterErr := consul.NewConsulClient().DeregisterService(serviceRegisterId); deregisterErr != nil {
 		logger.ZapLogger.Sugar().Errorf("Service deregister error from consul: %v", deregisterErr)
 	}
 
@@ -317,7 +353,7 @@ func gatewayServerGraceStop(server *http.Server) {
 	}
 
 	// 服务注销
-	if deregisterErr := drive.NewConsulClient().DeregisterService(serviceGatewayRegisterId); deregisterErr != nil {
+	if deregisterErr := consul.NewConsulClient().DeregisterService(serviceGatewayRegisterId); deregisterErr != nil {
 		logger.ZapLogger.Sugar().Errorf("Service deregister error from consul: %v", deregisterErr)
 	}
 

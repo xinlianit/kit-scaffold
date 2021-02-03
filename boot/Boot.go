@@ -18,8 +18,6 @@ func Init() {
 	var baseFields []zap.Field
 	logger.ZapLogger = logger.ZapInit(logger.NewDefaultZapConfig(), baseFields)
 
-	// 服务注册发现
-
 	// 初始化故障转移
 	//breaker.Init()
 }
