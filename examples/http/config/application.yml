@@ -29,7 +29,7 @@ app:
       # 是否注册服务; true-是、false-否
       enable: true
       # 服务名称
-      name: kit-scaffold.palm.grpc.api
+      name: kit-scaffold.palm.http.api
       # 服务标签
       tags: [tag_1,tag_2]
     # 健康检测
