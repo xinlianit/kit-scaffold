@@ -27,6 +27,14 @@ func DefaultServerOptions() []grpcTransport.ServerOption {
 	return options
 }
 
+// 服务实例
+func NewServerServer() ServerServer {
+	return ServerServer{
+		transport: transport.NewServerTransport(),
+		endpoint: endpoint.NewServerEndpoint(),
+	}
+}
+
 // 创建服务实例
 func NewBusinessInfoServer() BusinessInfoServer {
 	return BusinessInfoServer{
