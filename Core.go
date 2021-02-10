@@ -189,7 +189,7 @@ func RunGatewayServer(handler http.Handler) {
 			config.AppConfig.Id,
 			"gateway",
 			util.ServerUtil().GetServerIp(),
-			config.Config().GetInt("server.port"),
+			config.Config().GetInt("server.gateway.port"),
 		)
 
 		// 服务中心
@@ -326,6 +326,9 @@ func gRpcServerGraceStop(server *grpc.Server) {
 	if deregisterErr := consul.NewConsulClient().DeregisterService(serviceRegisterId); deregisterErr != nil {
 		logger.ZapLogger.Sugar().Errorf("Service deregister error from consul: %v", deregisterErr)
 	}
+
+	// 优雅关机
+	server.GracefulStop()
 
 	logger.ZapLogger.Info("gRPC Server exiting")
 }
