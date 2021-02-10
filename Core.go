@@ -26,6 +26,7 @@ var (
  	commandLineOnce sync.Once
 	serviceRegisterId string
  	serviceGatewayRegisterId string
+ 	wg sync.WaitGroup
 )
 
 func init() {
@@ -172,6 +173,9 @@ func RunRpcServer(grpcServer *grpc.Server) {
 // 运行RPC代理服务
 // @param handler http 处理器
 func RunGatewayServer(handler http.Handler) {
+	// 增加等待计数器
+	wg.Add(1)
+
 	// 命令行参数解析
 	CommandLineParse()
 
@@ -347,6 +351,9 @@ func gRpcServerGraceStop(server *grpc.Server) {
 	server.GracefulStop()
 
 	logger.ZapLogger.Info("gRPC Server exiting")
+
+	// 等待所有协程退出
+	wg.Wait()
 }
 
 // gateway 服务停止
@@ -379,4 +386,7 @@ func gatewayServerGraceStop(server *http.Server) {
 	}
 
 	logger.ZapLogger.Info("Gateway Server exiting")
+
+	// 完成，减少等待计数器
+	wg.Done()
 }
