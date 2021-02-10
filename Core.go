@@ -89,19 +89,23 @@ func RunHttpServer(handler http.Handler) {
 
 		// 服务注册
 		if err := consulClient.RegisterService(serviceRegisterId); err != nil {
-			logger.ZapLogger.Sugar().Errorf("Server register to consul error: %v", err)
+			logger.ZapLogger.Sugar().Errorf("Http server register to consul error: %v", err)
+		}else{
+			logger.ZapLogger.Info("Http server register to consul successful")
 		}
 
 		// 启动并监听服务
 		if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			logger.ZapLogger.Sugar().Errorf("Server run error: %v", err)
+			logger.ZapLogger.Sugar().Errorf("Http Server run error: %v", err)
 
 			// 服务注销
 			if deregisterErr := consulClient.DeregisterService(serviceRegisterId); deregisterErr != nil {
-				logger.ZapLogger.Sugar().Errorf("Service deregister error from consul: %v", deregisterErr)
+				logger.ZapLogger.Sugar().Errorf("Http server deregister error from consul: %v", deregisterErr)
+			}else{
+				logger.ZapLogger.Info("Http server deregister successful from consul")
 			}
 
-			panic("Server run error: " + err.Error())
+			panic("Http server run error: " + err.Error())
 		}
 	}()
 
@@ -128,7 +132,7 @@ func RunRpcServer(grpcServer *grpc.Server) {
 	// 监听端口
 	lis, err := net.Listen("tcp", listenAddress)
 	if err != nil {
-		logger.ZapLogger.Sugar().Errorf("Server listen error: %v", err)
+		logger.ZapLogger.Sugar().Errorf("gRPC server listen error: %v", err)
 		panic("Server listen error: " + err.Error())
 	}
 
@@ -144,17 +148,21 @@ func RunRpcServer(grpcServer *grpc.Server) {
 
 		// 服务注册
 		if err := consulClient.RegisterService(serviceRegisterId); err != nil {
-			logger.ZapLogger.Sugar().Errorf("Server register to consul error: %v", err)
+			logger.ZapLogger.Sugar().Errorf("gRPC server register to consul error: %v", err)
+		}else{
+			logger.ZapLogger.Info("gRPC server register to consul successful")
 		}
 
 		// 启动服务
 		if err := grpcServer.Serve(lis); err != nil {
 			// 注销服务
 			if deregisterErr := consulClient.DeregisterService(serviceRegisterId); deregisterErr != nil {
-				logger.ZapLogger.Sugar().Errorf("Service deregister error from consul: %v", deregisterErr)
+				logger.ZapLogger.Sugar().Errorf("gRPC server deregister error from consul: %v", deregisterErr)
+			}else{
+				logger.ZapLogger.Info("gRPC server deregister successful from consul")
 			}
 
-			logger.ZapLogger.Sugar().Panicf("Server run error: %v", err)
+			logger.ZapLogger.Sugar().Panicf("gRPC server run error: %v", err)
 		}
 	}()
 
@@ -257,7 +265,9 @@ func RunGatewayServer(handler http.Handler) {
 
 			// 注册网关服务
 			if err := consulClient.Agent().ServiceRegister(reg); err != nil {
-				logger.ZapLogger.Sugar().Errorf("Server register to consul error: %v", err)
+				logger.ZapLogger.Sugar().Errorf("Gateway server register to consul error: %v", err)
+			}else{
+				logger.ZapLogger.Info("Gateway server register to consul successful")
 			}
 		}
 
@@ -267,7 +277,9 @@ func RunGatewayServer(handler http.Handler) {
 
 			// 注销网关服务
 			if deregisterErr := consulClient.Agent().ServiceDeregister(serviceGatewayRegisterId); deregisterErr != nil {
-				logger.ZapLogger.Sugar().Errorf("Service deregister error from consul: %v", deregisterErr)
+				logger.ZapLogger.Sugar().Errorf("Gateway server deregister error from consul: %v", deregisterErr)
+			}else{
+				logger.ZapLogger.Info("Gateway server deregister successful from consul")
 			}
 
 			panic("Gateway server run error: " + err.Error())
@@ -289,22 +301,24 @@ func httpServerGraceStop(server *http.Server) {
 	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM) // 信号转发到 signalChan
 	sig := <-signalChan                                        // 阻塞等待接收上述两种信号时，往下执行服务关机
 	logger.ZapLogger.Sugar().Infof("Get Signal: %d", sig)
-	logger.ZapLogger.Info("Shutdown Server ...")
+	logger.ZapLogger.Info("Http Shutdown Server ...")
 
 	// 5 秒超时自动取消(当执行一个go 协程时，超时自动取消协程)
 	ctx, cancelFunc := context.WithTimeout(context.Background(), time.Duration(config.ServerConfig.ContextTimeout)*time.Millisecond)
 	defer cancelFunc()
 
 	if err := server.Shutdown(ctx); err != nil {
-		logger.ZapLogger.Sugar().Fatal("Server Shutdown: %v", err)
+		logger.ZapLogger.Sugar().Fatal("Http Server Shutdown: %v", err)
 	}
 
 	// 服务注销
 	if deregisterErr := consul.NewConsulClient().DeregisterService(serviceRegisterId); deregisterErr != nil {
-		logger.ZapLogger.Sugar().Errorf("Service deregister error from consul: %v", deregisterErr)
+		logger.ZapLogger.Sugar().Errorf("Http server deregister error from consul: %v", deregisterErr)
+	}else{
+		logger.ZapLogger.Info("Http server deregister successful from consul")
 	}
 
-	logger.ZapLogger.Info("Server exiting")
+	logger.ZapLogger.Info("Http Server exiting")
 }
 
 // RPC 服务停止
@@ -320,11 +334,13 @@ func gRpcServerGraceStop(server *grpc.Server) {
 	sig := <-signalChan                                        // 阻塞等待接收上述两种信号时，往下执行服务关机
 
 	logger.ZapLogger.Sugar().Infof("Get Signal: %d", sig)
-	logger.ZapLogger.Info("Shutdown Server ...")
+	logger.ZapLogger.Info("gRPC Shutdown Server ...")
 
 	// 服务注销
 	if deregisterErr := consul.NewConsulClient().DeregisterService(serviceRegisterId); deregisterErr != nil {
-		logger.ZapLogger.Sugar().Errorf("Service deregister error from consul: %v", deregisterErr)
+		logger.ZapLogger.Sugar().Errorf("gRPC server deregister error from consul: %v", deregisterErr)
+	}else{
+		logger.ZapLogger.Info("gRPC server deregister successful from consul")
 	}
 
 	// 优雅关机
@@ -345,20 +361,22 @@ func gatewayServerGraceStop(server *http.Server) {
 	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM) // 信号转发到 signalChan
 	sig := <-signalChan                                        // 阻塞等待接收上述两种信号时，往下执行服务关机
 	logger.ZapLogger.Sugar().Infof("Get Signal: %d", sig)
-	logger.ZapLogger.Info("Shutdown Server ...")
+	logger.ZapLogger.Info("Shutdown Gateway Server ...")
 
 	// 5 秒超时自动取消(当执行一个go 协程时，超时自动取消协程)
 	ctx, cancelFunc := context.WithTimeout(context.Background(), time.Duration(config.ServerConfig.ContextTimeout)*time.Millisecond)
 	defer cancelFunc()
 
 	if err := server.Shutdown(ctx); err != nil {
-		logger.ZapLogger.Sugar().Fatal("Server Shutdown: %v", err)
+		logger.ZapLogger.Sugar().Fatal("Gateway Server Shutdown: %v", err)
 	}
 
 	// 服务注销
 	if deregisterErr := consul.NewConsulClient().DeregisterService(serviceGatewayRegisterId); deregisterErr != nil {
-		logger.ZapLogger.Sugar().Errorf("Service deregister error from consul: %v", deregisterErr)
+		logger.ZapLogger.Sugar().Errorf("Gateway server deregister error from consul: %v", deregisterErr)
+	}else{
+		logger.ZapLogger.Info("Gateway server deregister successful from consul")
 	}
 
-	logger.ZapLogger.Info("Server exiting")
+	logger.ZapLogger.Info("Gateway Server exiting")
 }
