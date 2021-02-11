@@ -350,7 +350,7 @@ func gRpcServerGraceStop(server *grpc.Server) {
 	// 优雅关机
 	server.GracefulStop()
 
-	logger.ZapLogger.Info("gRPC Server exiting")
+	logger.ZapLogger.Info("gRPC server exiting")
 
 	// 等待所有协程退出
 	wg.Wait()
@@ -359,6 +359,8 @@ func gRpcServerGraceStop(server *grpc.Server) {
 // gateway 服务停止
 // @param server http 服务实例
 func gatewayServerGraceStop(server *http.Server) {
+	// 完成退出，减少等待计数器
+	defer wg.Done()
 	// 信号通道
 	signalChan := make(chan os.Signal, 1)
 	// kill 默认会发送 syscall.SIGTERM 信号
@@ -386,7 +388,4 @@ func gatewayServerGraceStop(server *http.Server) {
 	}
 
 	logger.ZapLogger.Info("Gateway Server exiting")
-
-	// 完成，减少等待计数器
-	wg.Done()
 }
