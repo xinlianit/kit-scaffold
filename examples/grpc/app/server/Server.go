@@ -27,11 +27,6 @@ func DefaultServerOptions() []grpcTransport.ServerOption {
 	return options
 }
 
-// 健康检查服务
-func NewHealthServer() HealthServer {
-	return HealthServer{}
-}
-
 // 服务实例
 func NewServerServer() ServerServer {
 	return ServerServer{

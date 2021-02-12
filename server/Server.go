@@ -5,3 +5,8 @@ import (
 )
 
 var Request model.Request
+
+// 健康检查服务
+func NewHealthServer() HealthServer {
+	return HealthServer{}
+}

@@ -3,7 +3,7 @@ module github.com/xinlianit/kit-scaffold
 go 1.13
 
 require (
-	gitee.com/jirenyou/business.palm.proto v1.0.0-2021021101
+	gitee.com/jirenyou/business.palm.proto v1.0.0-2021021201
 	github.com/fsnotify/fsnotify v1.4.7
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-kit/kit v0.10.0

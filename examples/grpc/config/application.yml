@@ -55,7 +55,7 @@ app:
       # 健康检测路径
       #path:
       # 健康检测地址
-      address: 39.100.153.72:21000/grpc.health.v1.Health.Check
+      address: 39.100.153.72:21000
       # http 检测
       http:
         # 关闭tls验证

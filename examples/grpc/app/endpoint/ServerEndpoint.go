@@ -15,7 +15,7 @@ type ServerEndpoint struct {
 func (e ServerEndpoint) Health() endpoint.Endpoint {
 	return func(ctx context.Context, req interface{}) (rsp interface{}, err error) {
 		return &response.HealthResponse{
-			Status: "UP",
+			Status: "SERVING",
 		}, nil
 	}
 }
