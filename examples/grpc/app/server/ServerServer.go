@@ -4,9 +4,9 @@ import (
 	"context"
 	"gitee.com/jirenyou/business.palm.proto/pb/go/transport/request"
 	"gitee.com/jirenyou/business.palm.proto/pb/go/transport/response"
+	grpcTransport "github.com/go-kit/kit/transport/grpc"
 	"github.com/xinlianit/kit-scaffold/examples/grpc/app/endpoint"
 	"github.com/xinlianit/kit-scaffold/examples/grpc/app/transport"
-	grpcTransport "github.com/go-kit/kit/transport/grpc"
 	"google.golang.org/grpc/status"
 )
 

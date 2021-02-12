@@ -33,13 +33,13 @@ app:
       # 服务名称
       name: kit-scaffold.palm.grpc.api
       # 服务标签
-      tags: [tag_1,tag_2]
+      tags: [kit-scaffold]
     # 健康检测
     healthCheck:
       # 是否启用健康检查；true-是、false-否
       enable: true
       # 检查类型; http、grpc、tcp
-      type: http
+      type: grpc
       # 检测ID
       #id:
       # 检测名称
@@ -53,9 +53,9 @@ app:
       # 请求协议
       protocol: http
       # 健康检测路径
-      path: health
+      #path:
       # 健康检测地址
-      address: 172.30.202.190:8080
+      address: 39.100.153.72:21000/grpc.health.v1.Health.Check
       # http 检测
       http:
         # 关闭tls验证
@@ -86,6 +86,6 @@ app:
         # 健康检测路径
         path: health
         # 健康检查地址
-        address: 172.30.202.190:8080/businessInfo/getBusinessInfo
+        address: http://39.100.153.72:21001/health
 
 

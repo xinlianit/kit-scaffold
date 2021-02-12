@@ -17,6 +17,8 @@ gitee.com/jirenyou/business.palm.proto v1.0.0-2020121501 h1:SSnTitRyhRoZpeHz7x3d
 gitee.com/jirenyou/business.palm.proto v1.0.0-2020121501/go.mod h1:P2HWvwwyGah0IrWJI9L6B70OIzRpKUOk1q/moiK8a+w=
 gitee.com/jirenyou/business.palm.proto v1.0.0-2021020801 h1:Ku3sFccGRxWSxxUvQMgVC9mJUVxNt6AKVZfeSQa0UTA=
 gitee.com/jirenyou/business.palm.proto v1.0.0-2021020801/go.mod h1:P2HWvwwyGah0IrWJI9L6B70OIzRpKUOk1q/moiK8a+w=
+gitee.com/jirenyou/business.palm.proto v1.0.0-2021021101 h1:l9Jv7uRhIAoSUbulRejdqsmv3bTyfiyA9nf53pnySGs=
+gitee.com/jirenyou/business.palm.proto v1.0.0-2021021101/go.mod h1:P2HWvwwyGah0IrWJI9L6B70OIzRpKUOk1q/moiK8a+w=
 github.com/Azure/azure-sdk-for-go v32.4.0+incompatible/go.mod h1:9XXNKU+eRnpl9moKnB4QOLf1HestfXbmab5FXxiDBjc=
 github.com/Azure/go-ansiterm v0.0.0-20170929234023-d6e3b3328b78/go.mod h1:LmzpDX56iTiv29bbRTIsUNlaFfuhWRQBWjQdVyAevI8=
 github.com/Azure/go-autorest/autorest v0.1.0/go.mod h1:AKyIcETwSUFxIcs/Wnq/C+kwCtlEYGUVd7FPNb2slmg=

@@ -83,7 +83,7 @@ func RunHttpServer(handler http.Handler) {
 
 	go func() {
 		// 服务注册ID
-		serviceRegisterId = fmt.Sprintf("%s-%s:%d", config.AppConfig.Id, util.ServerUtil().GetServerIp(), config.Config().GetInt("server.port"))
+		serviceRegisterId = fmt.Sprintf("%s-%s-%d", config.AppConfig.Id, util.ServerUtil().GetServerIp(), config.Config().GetInt("server.port"))
 
 		// consul 客户端
 		consulClient := consul.NewConsulClient()
@@ -142,7 +142,7 @@ func RunRpcServer(grpcServer *grpc.Server) {
 
 	go func() {
 		// 服务注册ID
-		serviceRegisterId = fmt.Sprintf("%s-%s:%d", config.AppConfig.Id, util.ServerUtil().GetServerIp(), config.Config().GetInt("server.port"))
+		serviceRegisterId = fmt.Sprintf("%s-%s-%d", config.AppConfig.Id, util.ServerUtil().GetServerIp(), config.Config().GetInt("server.port"))
 
 		// consul 客户端
 		consulClient := consul.NewConsulClient()
@@ -197,7 +197,7 @@ func RunGatewayServer(handler http.Handler) {
 
 	go func() {
 		// 服务注册ID
-		serviceGatewayRegisterId = fmt.Sprintf("%s-%s-%s:%d",
+		serviceGatewayRegisterId = fmt.Sprintf("%s-%s-%s-%d",
 			config.AppConfig.Id,
 			"gateway",
 			util.ServerUtil().GetServerIp(),

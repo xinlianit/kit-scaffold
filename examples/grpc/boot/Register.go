@@ -9,11 +9,14 @@ import (
 	"github.com/xinlianit/kit-scaffold/examples/grpc/app/server"
 	"github.com/xinlianit/kit-scaffold/logger"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/health/grpc_health_v1"
 )
 
 // RPC服务注册表
 // @param rpcServer RPC服务实例
 func RegisterRpcServer(rpcServer *grpc.Server) *grpc.Server {
+	// 健康检查
+	grpc_health_v1.RegisterHealthServer(rpcServer, server.NewHealthServer())
 	// 服务
 	service.RegisterServerServiceServer(rpcServer, server.NewServerServer())
 	// 商家信息
