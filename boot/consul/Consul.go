@@ -119,8 +119,6 @@ func (c ConsulClient) RegisterService(serviceId string) error {
 			reg.Check.GRPC = checkAddress
 			// 是否启用TLS
 			reg.Check.GRPCUseTLS = cfg.HealthCheck.Grpc.TlsEnable
-			// 注销时间，服务过期时间 TODO: debug
-			reg.Check.DeregisterCriticalServiceAfter = "10s"
 		default:
 			// 检测地址
 			reg.Check.HTTP = checkAddress
