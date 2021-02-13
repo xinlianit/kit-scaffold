@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package transport.request;
+
+option go_package = "github.com/xinlianit/kit-scaffold/pb/transport/request;request";
+
+// 健康检查
+message HealthRequest {
+
+}

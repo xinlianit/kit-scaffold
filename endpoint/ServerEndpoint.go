@@ -2,8 +2,8 @@ package endpoint
 
 import (
 	"context"
-	"gitee.com/jirenyou/business.palm.proto/pb/go/transport/response"
 	"github.com/go-kit/kit/endpoint"
+	"github.com/xinlianit/kit-scaffold/pb/transport/response"
 )
 
 // 服务连接点

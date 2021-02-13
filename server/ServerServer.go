@@ -2,11 +2,11 @@ package server
 
 import (
 	"context"
-	"gitee.com/jirenyou/business.palm.proto/pb/go/transport/request"
-	"gitee.com/jirenyou/business.palm.proto/pb/go/transport/response"
 	grpcTransport "github.com/go-kit/kit/transport/grpc"
-	"github.com/xinlianit/kit-scaffold/examples/grpc/app/endpoint"
-	"github.com/xinlianit/kit-scaffold/examples/grpc/app/transport"
+	"github.com/xinlianit/kit-scaffold/endpoint"
+	"github.com/xinlianit/kit-scaffold/pb/transport/request"
+	"github.com/xinlianit/kit-scaffold/pb/transport/response"
+	"github.com/xinlianit/kit-scaffold/transport"
 	"google.golang.org/grpc/status"
 )
 
@@ -21,7 +21,8 @@ func (s ServerServer) Health(ctx context.Context, request *request.HealthRequest
 		s.endpoint.Health(),
 		s.transport.DecodeHealthRequest(),
 		s.transport.EncodeHealthResponse(),
-		defaultServerOptions...,
+		// TODO: 参数待传入
+		//defaultServerOptions...,
 	)
 
 	ctx, resp, err := handler.ServeGRPC(ctx, request)

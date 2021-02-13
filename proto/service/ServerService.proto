@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package service;
+
+option go_package = "github.com/xinlianit/kit-scaffold/pb/service;service";
+
+import "google/api/annotations.proto";
+import "transport/request/ServerRequest.proto";
+import "transport/response/ServerResponse.proto";
+
+// 服务
+service ServerService {
+    // 健康检查
+    rpc Health (transport.request.HealthRequest) returns (transport.response.HealthResponse) {
+        option (google.api.http) = {
+            get: "/health"
+        };
+    }
+}

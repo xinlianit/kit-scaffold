@@ -2,9 +2,9 @@ package transport
 
 import (
 	"context"
-	"gitee.com/jirenyou/business.palm.proto/pb/go/transport/request"
-	"gitee.com/jirenyou/business.palm.proto/pb/go/transport/response"
 	grpcTransport "github.com/go-kit/kit/transport/grpc"
+	"github.com/xinlianit/kit-scaffold/pb/transport/request"
+	"github.com/xinlianit/kit-scaffold/pb/transport/response"
 	"google.golang.org/grpc/status"
 )
 

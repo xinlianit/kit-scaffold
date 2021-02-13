@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package transport.response;
+
+option go_package = "github.com/xinlianit/kit-scaffold/pb/transport/response;response";
+
+// 健康检查
+message HealthResponse {
+    string status = 1;  // 状态; SERVING-启动、DOWN-停止
+}
