@@ -2,16 +2,16 @@ package handler
 
 import (
 	"github.com/go-kit/kit/endpoint"
-	grpcTransport "github.com/go-kit/kit/transport/grpc"
+	"github.com/go-kit/kit/transport/grpc"
 	"github.com/xinlianit/kit-scaffold/middleware"
 )
 
 type GrpcHandler struct {
-	options     []grpcTransport.ServerOption
+	options     []grpc.ServerOption
 	middlewares []endpoint.Middleware
 }
 
-func (h *GrpcHandler) Options(options ...grpcTransport.ServerOption) *GrpcHandler {
+func (h *GrpcHandler) Options(options ...grpc.ServerOption) *GrpcHandler {
 	h.options = options
 	return h
 }
@@ -23,7 +23,7 @@ func (h *GrpcHandler) Use(middlewares ...endpoint.Middleware) *GrpcHandler {
 	return h
 }
 
-func (h GrpcHandler) Server(e endpoint.Endpoint, dec grpcTransport.DecodeRequestFunc, enc grpcTransport.EncodeResponseFunc) *grpcTransport.Server {
+func (h GrpcHandler) Server(e endpoint.Endpoint, dec grpc.DecodeRequestFunc, enc grpc.EncodeResponseFunc) *grpc.Server {
 	// 日志中间件
 	h.middlewares = append(h.middlewares, middleware.LoggerMiddleware)
 
@@ -37,7 +37,7 @@ func (h GrpcHandler) Server(e endpoint.Endpoint, dec grpcTransport.DecodeRequest
 	// 日志中间件
 	e = middleware.LoggerMiddleware(e)
 
-	server := grpcTransport.NewServer(e, dec, enc, h.options...)
+	server := grpc.NewServer(e, dec, enc, h.options...)
 
 	return server
 }

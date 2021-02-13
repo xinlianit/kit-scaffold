@@ -2,7 +2,7 @@ package server
 
 import (
 	"context"
-	grpcTransport "github.com/go-kit/kit/transport/grpc"
+	"github.com/go-kit/kit/transport/grpc"
 	"github.com/xinlianit/kit-scaffold/endpoint"
 	"github.com/xinlianit/kit-scaffold/pb/transport/request"
 	"github.com/xinlianit/kit-scaffold/pb/transport/response"
@@ -17,12 +17,11 @@ type ServerServer struct {
 
 // 健康探针
 func (s ServerServer) Health(ctx context.Context, request *request.HealthRequest) (*response.HealthResponse, error) {
-	handler := grpcTransport.NewServer(
+	handler := grpc.NewServer(
 		s.endpoint.Health(),
 		s.transport.DecodeHealthRequest(),
 		s.transport.EncodeHealthResponse(),
-		// TODO: 参数待传入
-		//defaultServerOptions...,
+		Options...,
 	)
 
 	ctx, resp, err := handler.ServeGRPC(ctx, request)

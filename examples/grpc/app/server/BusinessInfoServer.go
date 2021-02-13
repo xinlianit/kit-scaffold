@@ -7,6 +7,7 @@ import (
 	grpcTransport "github.com/go-kit/kit/transport/grpc"
 	"github.com/xinlianit/kit-scaffold/examples/grpc/app/endpoint"
 	"github.com/xinlianit/kit-scaffold/examples/grpc/app/transport"
+	"github.com/xinlianit/kit-scaffold/server"
 	"google.golang.org/grpc/status"
 )
 
@@ -25,7 +26,7 @@ func (s BusinessInfoServer) GetBusinessInfo(ctx context.Context, request *reques
 		s.endpoint.GetBusinessInfo(),                // 连接点
 		s.transport.DecodeGetBusinessInfoRequest(),  // 请求解码器
 		s.transport.EncodeGetBusinessInfoResponse(), // 响应编码器
-		defaultServerOptions...,                     // 处理器参数
+		server.Options...,                           // 处理器参数
 	)
 
 	// 绑定 grpc 处理器
@@ -50,7 +51,7 @@ func (s BusinessInfoServer) GetBusinessInfoBase(ctx context.Context, request *re
 		s.endpoint.GetBusinessInfo(),                // 连接点
 		s.transport.DecodeGetBusinessInfoRequest(),  // 请求解码器
 		s.transport.EncodeGetBusinessInfoResponse(), // 响应编码器
-		defaultServerOptions...,                     // 处理器参数
+		server.Options...,                           // 处理器参数
 	)
 
 	ctx, rpcRsp, err := handler.ServeGRPC(ctx, request)

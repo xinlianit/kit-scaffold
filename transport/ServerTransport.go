@@ -2,7 +2,7 @@ package transport
 
 import (
 	"context"
-	grpcTransport "github.com/go-kit/kit/transport/grpc"
+	"github.com/go-kit/kit/transport/grpc"
 	"github.com/xinlianit/kit-scaffold/pb/transport/request"
 	"github.com/xinlianit/kit-scaffold/pb/transport/response"
 	"google.golang.org/grpc/status"
@@ -17,7 +17,7 @@ type ServerTransport struct {
 
 }
 
-func (t ServerTransport) DecodeHealthRequest() grpcTransport.DecodeRequestFunc {
+func (t ServerTransport) DecodeHealthRequest() grpc.DecodeRequestFunc {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
 		// 请求断言
 		healthReq, ok := req.(*request.HealthRequest)
@@ -30,7 +30,7 @@ func (t ServerTransport) DecodeHealthRequest() grpcTransport.DecodeRequestFunc {
 	}
 }
 
-func (t ServerTransport) EncodeHealthResponse() grpcTransport.EncodeResponseFunc {
+func (t ServerTransport) EncodeHealthResponse() grpc.EncodeResponseFunc {
 	return func(ctx context.Context, rsp interface{}) (interface{}, error) {
 		// 请求断言
 		healthRsp, ok := rsp.(*response.HealthResponse)
