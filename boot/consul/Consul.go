@@ -135,3 +135,11 @@ func (c ConsulClient) RegisterService(serviceId string) error {
 func (c ConsulClient) DeregisterService(serviceId string) error {
 	return c.client.Agent().ServiceDeregister(serviceId)
 }
+
+// 服务发现
+//func (c ConsulClient) DiscoverService(service, tag string, passingOnly bool, query *consulApi.QueryOptions) ([]string, error) {
+//	servers, metainfo, err := c.client.Health().Service(service, tag, passingOnly, query)
+//	if err != nil {
+//		return nil, err
+//	}
+//}
