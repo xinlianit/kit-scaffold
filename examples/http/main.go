@@ -18,7 +18,7 @@ func main() {
 	httpHandler := NewHttpHandler()
 
 	// 运行服务
-	scaffold.RunHttpServer(httpHandler)
+	scaffold.RunHTTPServer(httpHandler)
 }
 
 // 命令行初始化

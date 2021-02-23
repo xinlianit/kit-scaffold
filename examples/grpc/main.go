@@ -32,7 +32,7 @@ func main() {
 	boot.RegisterRpcServer(rpcServer)
 
 	// 启动服务
-	scaffold.RunRpcServer(rpcServer)
+	scaffold.RunRPCServer(rpcServer)
 }
 
 // 网关服务

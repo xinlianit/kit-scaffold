@@ -21,8 +21,8 @@ require (
 	github.com/spf13/viper v1.7.1
 	github.com/xinlianit/go-util v1.0.0-2021021702
 	go.uber.org/zap v1.16.0
-	golang.org/x/mod v0.1.1-0.20191107180719-034126e5016b // indirect
-	golang.org/x/tools v0.0.0-20200207183749-b753a1ba74fa // indirect
+	golang.org/x/lint v0.0.0-20201208152925-83fdc39ff7b5 // indirect
+	golang.org/x/tools v0.1.0 // indirect
 	google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013
 	google.golang.org/grpc v1.34.0
 	google.golang.org/protobuf v1.25.0
