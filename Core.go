@@ -82,28 +82,30 @@ func RunHTTPServer(handler http.Handler) {
 	logger.ZapLogger.Info(fmt.Sprintf("Listening and serving HTTP on %s, PID: %d", listenAddress, os.Getpid()))
 
 	go func() {
-		// 服务注册ID
-		serviceRegisterID = fmt.Sprintf("%s-%s-%d", config.AppConfig.Id, util.ServerUtil().GetServerIp(), config.Config().GetInt("server.port"))
+		// 是否注册服务
+		if config.AppConfig.ServiceCenter.Register.Enable {
+			// 服务注册ID
+			serviceRegisterID = fmt.Sprintf("%s-%s-%d", config.AppConfig.Id, util.ServerUtil().GetServerIp(), config.Config().GetInt("server.port"))
 
-		// consul 客户端
-		consulClient := consul.NewClient()
-
-		// 服务注册
-		if err := consulClient.RegisterService(serviceRegisterID); err != nil {
-			logger.ZapLogger.Sugar().Errorf("Http server register to consul error: %v", err)
-		}else{
-			logger.ZapLogger.Info("Http server register to consul successful")
+			// 服务注册
+			if err := consul.NewClient().RegisterService(serviceRegisterID); err != nil {
+				logger.ZapLogger.Sugar().Errorf("Http server register to consul error: %v", err)
+			}else{
+				logger.ZapLogger.Info("Http server register to consul successful")
+			}
 		}
 
 		// 启动并监听服务
 		if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			logger.ZapLogger.Sugar().Errorf("Http Server run error: %v", err)
 
-			// 服务注销
-			if deregisterErr := consulClient.DeregisterService(serviceRegisterID); deregisterErr != nil {
-				logger.ZapLogger.Sugar().Errorf("Http server deregister error from consul: %v", deregisterErr)
-			}else{
-				logger.ZapLogger.Info("Http server deregister successful from consul")
+			if config.AppConfig.ServiceCenter.Register.Enable {
+				// 服务注销
+				if deregisterErr := consul.NewClient().DeregisterService(serviceRegisterID); deregisterErr != nil {
+					logger.ZapLogger.Sugar().Errorf("Http server deregister error from consul: %v", deregisterErr)
+				}else{
+					logger.ZapLogger.Info("Http server deregister successful from consul")
+				}
 			}
 
 			panic("Http server run error: " + err.Error())
@@ -141,26 +143,29 @@ func RunRPCServer(grpcServer *grpc.Server) {
 	logger.ZapLogger.Info(fmt.Sprintf("Listening and serving gRPC on %s, PID: %d", listenAddress, os.Getpid()))
 
 	go func() {
-		// 服务注册ID
-		serviceRegisterID = fmt.Sprintf("%s-%s-%d", config.AppConfig.Id, util.ServerUtil().GetServerIp(), config.Config().GetInt("server.port"))
+		// 是否注册服务
+		if config.AppConfig.ServiceCenter.Register.Enable {
+			// 服务注册ID
+			serviceRegisterID = fmt.Sprintf("%s-%s-%d", config.AppConfig.Id, util.ServerUtil().GetServerIp(), config.Config().GetInt("server.port"))
 
-		// consul 客户端
-		consulClient := consul.NewClient()
-
-		// 服务注册
-		if err := consulClient.RegisterService(serviceRegisterID); err != nil {
-			logger.ZapLogger.Sugar().Errorf("gRPC server register to consul error: %v", err)
-		}else{
-			logger.ZapLogger.Info("gRPC server register to consul successful")
+			// 服务注册
+			if err := consul.NewClient().RegisterService(serviceRegisterID); err != nil {
+				logger.ZapLogger.Sugar().Errorf("gRPC server register to consul error: %v", err)
+			}else{
+				logger.ZapLogger.Info("gRPC server register to consul successful")
+			}
 		}
 
 		// 启动服务
 		if err := grpcServer.Serve(lis); err != nil {
-			// 注销服务
-			if deregisterErr := consulClient.DeregisterService(serviceRegisterID); deregisterErr != nil {
-				logger.ZapLogger.Sugar().Errorf("gRPC server deregister error from consul: %v", deregisterErr)
-			}else{
-				logger.ZapLogger.Info("gRPC server deregister successful from consul")
+			// 是否注册服务
+			if config.AppConfig.ServiceCenter.Register.Enable {
+				// 注销服务
+				if deregisterErr := consul.NewClient().DeregisterService(serviceRegisterID); deregisterErr != nil {
+					logger.ZapLogger.Sugar().Errorf("gRPC server deregister error from consul: %v", deregisterErr)
+				}else{
+					logger.ZapLogger.Info("gRPC server deregister successful from consul")
+				}
 			}
 
 			logger.ZapLogger.Sugar().Panicf("gRPC server run error: %v", err)
@@ -196,82 +201,88 @@ func RunGatewayServer(handler http.Handler) {
 	logger.ZapLogger.Info(fmt.Sprintf("Listening and serving Gateway HTTP on %s, PID: %d", gatewayListenAddress, os.Getpid()))
 
 	go func() {
-		// 服务注册ID
-		serviceGatewayRegisterID = fmt.Sprintf("%s-%s-%s-%d",
-			config.AppConfig.Id,
-			"gateway",
-			util.ServerUtil().GetServerIp(),
-			config.Config().GetInt("server.gateway.port"),
-		)
+		// 是否注册服务
+		if config.AppConfig.ServiceCenter.Register.Enable {
+			// 服务注册ID
+			serviceGatewayRegisterID = fmt.Sprintf("%s-%s-%s-%d",
+				config.AppConfig.Id,
+				"gateway",
+				util.ServerUtil().GetServerIp(),
+				config.Config().GetInt("server.gateway.port"),
+			)
 
-		// 服务中心
-		serviceCenterCfg := config.AppConfig.ServiceCenter
+			// 服务中心
+			serviceCenterCfg := config.AppConfig.ServiceCenter
 
-		// consul 客户端
-		cfg := consulApi.DefaultConfig()
-		// consul 地址
-		cfg.Address = serviceCenterCfg.Consul.Address
-		consulClient, err := consulApi.NewClient(cfg)
-		if err != nil {
-			logger.ZapLogger.Sugar().Errorf("Consul client initialize error: %v", err)
-		}else{
-			// 服务名称
-			serviceName := serviceCenterCfg.Register.Name
-			if serviceName == "" {
-				serviceName = config.AppConfig.Id
-			}
-
-			// 服务注册信息
-			reg := &consulApi.AgentServiceRegistration{
-				// 服务ID
-				ID: serviceGatewayRegisterID,
+			// consul 客户端
+			cfg := consulApi.DefaultConfig()
+			// consul 地址
+			cfg.Address = serviceCenterCfg.Consul.Address
+			consulClient, err := consulApi.NewClient(cfg)
+			if err != nil {
+				logger.ZapLogger.Sugar().Errorf("Consul client initialize error: %v", err)
+			}else{
 				// 服务名称
-				Name: serviceName + "-gateway",
-				// 服务地址
-				Address: util.ServerUtil().GetServerIp(),
-				// 服务端口
-				Port: config.ServerConfig.Gateway.Port,
-			}
-
-			// 服务标签
-			if serviceCenterCfg.Register.Tags != nil {
-				var newTags []string
-
-				for _, tagItem := range serviceCenterCfg.Register.Tags {
-					newTags = append(newTags, tagItem + "-gateway")
+				serviceName := serviceCenterCfg.Register.Name
+				if serviceName == "" {
+					serviceName = config.AppConfig.Id
 				}
 
-				reg.Tags = newTags
-			}
+				// 服务注册信息
+				reg := &consulApi.AgentServiceRegistration{
+					// 服务ID
+					ID: serviceGatewayRegisterID,
+					// 服务名称
+					Name: serviceName + "-gateway",
+					// 服务地址
+					Address: util.ServerUtil().GetServerIp(),
+					// 服务端口
+					Port: config.ServerConfig.Gateway.Port,
+				}
 
-			// 健康检查
-			checkAddress := serviceCenterCfg.HealthCheck.Gateway.Address
-			if checkAddress == "" {
-				checkAddress = fmt.Sprintf("%s://%s:%d/%s", serviceCenterCfg.HealthCheck.Gateway.Protocol, reg.Address, reg.Port, serviceCenterCfg.HealthCheck.Gateway.Path)
-			}
-			reg.Check = &consulApi.AgentServiceCheck{
-				// 检测间隔
-				Interval: (time.Millisecond * time.Duration(serviceCenterCfg.HealthCheck.Gateway.Interval)).String(),
-				// 检测超时
-				Timeout: (time.Millisecond * time.Duration(serviceCenterCfg.HealthCheck.Gateway.Timeout)).String(),
-				// 检测地址
-				HTTP: checkAddress,
-				// 检测请求方式
-				Method: serviceCenterCfg.HealthCheck.Gateway.Method,
-				// 注销时间，服务过期时间
-				DeregisterCriticalServiceAfter: (time.Millisecond * time.Duration(serviceCenterCfg.HealthCheck.Gateway.MaxLifeTime)).String(),
-			}
+				// 服务标签
+				if serviceCenterCfg.Register.Tags != nil {
+					var newTags []string
 
-			// 检测项名称
-			if serviceCenterCfg.HealthCheck.Gateway.Name != "" {
-				reg.Check.Name = serviceCenterCfg.HealthCheck.Gateway.Name
-			}
+					for _, tagItem := range serviceCenterCfg.Register.Tags {
+						newTags = append(newTags, tagItem + "-gateway")
+					}
 
-			// 注册网关服务
-			if err := consulClient.Agent().ServiceRegister(reg); err != nil {
-				logger.ZapLogger.Sugar().Errorf("Gateway server register to consul error: %v", err)
-			}else{
-				logger.ZapLogger.Info("Gateway server register to consul successful")
+					reg.Tags = newTags
+				}
+
+				// 服务健康检查
+				if serviceCenterCfg.HealthCheck.Enable {
+					// 健康检查
+					checkAddress := serviceCenterCfg.HealthCheck.Gateway.Address
+					if checkAddress == "" {
+						checkAddress = fmt.Sprintf("%s://%s:%d/%s", serviceCenterCfg.HealthCheck.Gateway.Protocol, reg.Address, reg.Port, serviceCenterCfg.HealthCheck.Gateway.Path)
+					}
+					reg.Check = &consulApi.AgentServiceCheck{
+						// 检测间隔
+						Interval: (time.Millisecond * time.Duration(serviceCenterCfg.HealthCheck.Gateway.Interval)).String(),
+						// 检测超时
+						Timeout: (time.Millisecond * time.Duration(serviceCenterCfg.HealthCheck.Gateway.Timeout)).String(),
+						// 检测地址
+						HTTP: checkAddress,
+						// 检测请求方式
+						Method: serviceCenterCfg.HealthCheck.Gateway.Method,
+						// 注销时间，服务过期时间
+						DeregisterCriticalServiceAfter: (time.Millisecond * time.Duration(serviceCenterCfg.HealthCheck.Gateway.MaxLifeTime)).String(),
+					}
+
+					// 检测项名称
+					if serviceCenterCfg.HealthCheck.Gateway.Name != "" {
+						reg.Check.Name = serviceCenterCfg.HealthCheck.Gateway.Name
+					}
+				}
+
+				// 注册网关服务
+				if err := consulClient.Agent().ServiceRegister(reg); err != nil {
+					logger.ZapLogger.Sugar().Errorf("Gateway server register to consul error: %v", err)
+				}else{
+					logger.ZapLogger.Info("Gateway server register to consul successful")
+				}
 			}
 		}
 
@@ -279,11 +290,14 @@ func RunGatewayServer(handler http.Handler) {
 		if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			logger.ZapLogger.Sugar().Errorf("Gateway server run error: %v", err)
 
-			// 注销网关服务
-			if deregisterErr := consulClient.Agent().ServiceDeregister(serviceGatewayRegisterID); deregisterErr != nil {
-				logger.ZapLogger.Sugar().Errorf("Gateway server deregister error from consul: %v", deregisterErr)
-			}else{
-				logger.ZapLogger.Info("Gateway server deregister successful from consul")
+			// 是否注册服务
+			if config.AppConfig.ServiceCenter.Register.Enable {
+				// 注销网关服务
+				if deregisterErr := consul.NewClient().DeregisterService(serviceGatewayRegisterID); deregisterErr != nil {
+					logger.ZapLogger.Sugar().Errorf("Gateway server deregister error from consul: %v", deregisterErr)
+				}else{
+					logger.ZapLogger.Info("Gateway server deregister successful from consul")
+				}
 			}
 
 			panic("Gateway server run error: " + err.Error())
@@ -315,11 +329,13 @@ func httpServerGraceStop(server *http.Server) {
 		logger.ZapLogger.Sugar().Fatal("Http Server Shutdown: %v", err)
 	}
 
-	// 服务注销
-	if deregisterErr := consul.NewClient().DeregisterService(serviceRegisterID); deregisterErr != nil {
-		logger.ZapLogger.Sugar().Errorf("Http server deregister error from consul: %v", deregisterErr)
-	}else{
-		logger.ZapLogger.Info("Http server deregister successful from consul")
+	if config.AppConfig.ServiceCenter.Register.Enable {
+		// 服务注销
+		if deregisterErr := consul.NewClient().DeregisterService(serviceRegisterID); deregisterErr != nil {
+			logger.ZapLogger.Sugar().Errorf("Http server deregister error from consul: %v", deregisterErr)
+		}else{
+			logger.ZapLogger.Info("Http server deregister successful from consul")
+		}
 	}
 
 	logger.ZapLogger.Info("Http Server exiting")
@@ -340,11 +356,13 @@ func gRPCServerGraceStop(server *grpc.Server) {
 	logger.ZapLogger.Sugar().Infof("Get Signal: %d", sig)
 	logger.ZapLogger.Info("gRPC Shutdown Server ...")
 
-	// 服务注销
-	if deregisterErr := consul.NewClient().DeregisterService(serviceRegisterID); deregisterErr != nil {
-		logger.ZapLogger.Sugar().Errorf("gRPC server deregister error from consul: %v", deregisterErr)
-	}else{
-		logger.ZapLogger.Info("gRPC server deregister successful from consul")
+	if config.AppConfig.ServiceCenter.Register.Enable {
+		// 服务注销
+		if deregisterErr := consul.NewClient().DeregisterService(serviceRegisterID); deregisterErr != nil {
+			logger.ZapLogger.Sugar().Errorf("gRPC server deregister error from consul: %v", deregisterErr)
+		}else{
+			logger.ZapLogger.Info("gRPC server deregister successful from consul")
+		}
 	}
 
 	// 优雅关机
@@ -380,11 +398,13 @@ func gatewayServerGraceStop(server *http.Server) {
 		logger.ZapLogger.Sugar().Fatal("Gateway Server Shutdown: %v", err)
 	}
 
-	// 服务注销
-	if deregisterErr := consul.NewClient().DeregisterService(serviceGatewayRegisterID); deregisterErr != nil {
-		logger.ZapLogger.Sugar().Errorf("Gateway server deregister error from consul: %v", deregisterErr)
-	}else{
-		logger.ZapLogger.Info("Gateway server deregister successful from consul")
+	if config.AppConfig.ServiceCenter.Register.Enable {
+		// 服务注销
+		if deregisterErr := consul.NewClient().DeregisterService(serviceGatewayRegisterID); deregisterErr != nil {
+			logger.ZapLogger.Sugar().Errorf("Gateway server deregister error from consul: %v", deregisterErr)
+		}else{
+			logger.ZapLogger.Info("Gateway server deregister successful from consul")
+		}
 	}
 
 	logger.ZapLogger.Info("Gateway Server exiting")
