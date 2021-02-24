@@ -3,17 +3,22 @@ package boot
 import (
 	"context"
 	"fmt"
+	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+	"github.com/xinlianit/kit-scaffold/endpoint"
+	"github.com/xinlianit/kit-scaffold/handler"
 	"github.com/xinlianit/kit-scaffold/logger"
 	"github.com/xinlianit/kit-scaffold/pb/service"
 	"github.com/xinlianit/kit-scaffold/server"
+	"github.com/xinlianit/kit-scaffold/transport"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health/grpc_health_v1"
+	"net/http"
 )
 
-// 基础服务注册
+// RegisterRPCBaseServer RPC基础服务注册
 // @param rpcServer RPC服务实例
-func RegisterBaseServer(rpcServer *grpc.Server) *grpc.Server {
+func RegisterRPCBaseServer(rpcServer *grpc.Server) *grpc.Server {
 	// 健康检查
 	grpc_health_v1.RegisterHealthServer(rpcServer, server.NewHealthServer())
 	// 服务信息
@@ -22,7 +27,7 @@ func RegisterBaseServer(rpcServer *grpc.Server) *grpc.Server {
 	return rpcServer
 }
 
-// Gateway 网关基础服务注册
+// RegisterGatewayBaseServer 网关基础服务注册
 // @param ctx 上下文
 // @param mux 多路器
 // @param endpoint RPC服务连接地址
@@ -36,4 +41,16 @@ func RegisterGatewayBaseServer(ctx context.Context, mux *runtime.ServeMux, endpo
 	}
 
 	return mux
+}
+
+// RegisterHTTPBaseServer HTTP基础服务注册
+func RegisterHTTPBaseServer(router *mux.Router, handler *handler.HttpHandler) *mux.Router {
+	// 健康检查
+	{
+		healthTransport := transport.NewHealthTransport()
+		healthEndpoint := endpoint.NewHealthEndpoint()
+		healthHandler := handler.Server(healthEndpoint.Check, healthTransport.CheckDecode)
+		router.Methods(http.MethodGet).Path("/health").Handler(healthHandler)
+	}
+	return router
 }

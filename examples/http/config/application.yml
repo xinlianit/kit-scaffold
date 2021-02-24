@@ -31,7 +31,7 @@ app:
       # 服务名称
       name: kit-scaffold.palm.http.api
       # 服务标签
-      tags: [tag_1,tag_2]
+      tags: [v1]
     # 健康检测
     healthCheck:
       # 是否启用健康检查；true-是、false-否
@@ -47,13 +47,13 @@ app:
       # 检查超时（单位：毫秒）
       timeout: 1000
       # 最大生存周期（单位：毫秒）
-      maxLifeTime: 5000
+      maxLifeTime: 60000
       # 请求协议
       protocol: http
       # 健康检测路径
       path: health
       # 健康检测地址
-      address: 172.30.202.190:8080
+      address: http://39.100.153.72:21002/health
       # http 检测
       http:
         # 关闭tls验证

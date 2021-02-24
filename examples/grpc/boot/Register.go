@@ -16,7 +16,7 @@ import (
 // @param rpcServer RPC服务实例
 func RegisterRpcServer(rpcServer *grpc.Server) *grpc.Server {
 	// 注册基础服务
-	boot.RegisterBaseServer(rpcServer)
+	boot.RegisterRPCBaseServer(rpcServer)
 
 	// 商家信息
 	service.RegisterBusinessInfoServiceServer(rpcServer, server.NewBusinessInfoServer())

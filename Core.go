@@ -86,7 +86,7 @@ func RunHTTPServer(handler http.Handler) {
 		serviceRegisterID = fmt.Sprintf("%s-%s-%d", config.AppConfig.Id, util.ServerUtil().GetServerIp(), config.Config().GetInt("server.port"))
 
 		// consul 客户端
-		consulClient := consul.NewConsulClient()
+		consulClient := consul.NewClient()
 
 		// 服务注册
 		if err := consulClient.RegisterService(serviceRegisterID); err != nil {
@@ -145,7 +145,7 @@ func RunRPCServer(grpcServer *grpc.Server) {
 		serviceRegisterID = fmt.Sprintf("%s-%s-%d", config.AppConfig.Id, util.ServerUtil().GetServerIp(), config.Config().GetInt("server.port"))
 
 		// consul 客户端
-		consulClient := consul.NewConsulClient()
+		consulClient := consul.NewClient()
 
 		// 服务注册
 		if err := consulClient.RegisterService(serviceRegisterID); err != nil {
@@ -316,7 +316,7 @@ func httpServerGraceStop(server *http.Server) {
 	}
 
 	// 服务注销
-	if deregisterErr := consul.NewConsulClient().DeregisterService(serviceRegisterID); deregisterErr != nil {
+	if deregisterErr := consul.NewClient().DeregisterService(serviceRegisterID); deregisterErr != nil {
 		logger.ZapLogger.Sugar().Errorf("Http server deregister error from consul: %v", deregisterErr)
 	}else{
 		logger.ZapLogger.Info("Http server deregister successful from consul")
@@ -341,7 +341,7 @@ func gRPCServerGraceStop(server *grpc.Server) {
 	logger.ZapLogger.Info("gRPC Shutdown Server ...")
 
 	// 服务注销
-	if deregisterErr := consul.NewConsulClient().DeregisterService(serviceRegisterID); deregisterErr != nil {
+	if deregisterErr := consul.NewClient().DeregisterService(serviceRegisterID); deregisterErr != nil {
 		logger.ZapLogger.Sugar().Errorf("gRPC server deregister error from consul: %v", deregisterErr)
 	}else{
 		logger.ZapLogger.Info("gRPC server deregister successful from consul")
@@ -381,7 +381,7 @@ func gatewayServerGraceStop(server *http.Server) {
 	}
 
 	// 服务注销
-	if deregisterErr := consul.NewConsulClient().DeregisterService(serviceGatewayRegisterID); deregisterErr != nil {
+	if deregisterErr := consul.NewClient().DeregisterService(serviceGatewayRegisterID); deregisterErr != nil {
 		logger.ZapLogger.Sugar().Errorf("Gateway server deregister error from consul: %v", deregisterErr)
 	}else{
 		logger.ZapLogger.Info("Gateway server deregister successful from consul")

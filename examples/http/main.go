@@ -4,6 +4,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/spf13/pflag"
 	scaffold "github.com/xinlianit/kit-scaffold"
+	"github.com/xinlianit/kit-scaffold/boot"
 	"github.com/xinlianit/kit-scaffold/examples/http/endpoint"
 	"github.com/xinlianit/kit-scaffold/examples/http/middleware"
 	"github.com/xinlianit/kit-scaffold/examples/http/transport"
@@ -40,6 +41,9 @@ func NewHttpHandler() http.Handler {
 	testHandler := httpHandler.Server(indexEndpoint.Test, indexTransport.HelloDecode)
 
 	route := mux.NewRouter()
+
+	// 注册基本服务
+	boot.RegisterHTTPBaseServer(route, httpHandler)
 
 	route.Methods(http.MethodGet).Path("/index/hello").Handler(helloHandler)
 	route.Methods(http.MethodGet).Path("/index/test").Handler(testHandler)

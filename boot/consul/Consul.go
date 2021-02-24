@@ -6,11 +6,12 @@ import (
 	"github.com/xinlianit/go-util"
 	"github.com/xinlianit/kit-scaffold/config"
 	"github.com/xinlianit/kit-scaffold/logger"
+	"log"
 	"time"
 )
 
-// 创建Consul客户端
-func NewConsulClient() ConsulClient {
+// NewClient 创建Consul客户端
+func NewClient() Client {
 	// consul 地址
 	var address string
 	if address = config.Config().GetString("consul.address"); address == "" {
@@ -28,18 +29,18 @@ func NewConsulClient() ConsulClient {
 		logger.ZapLogger.Error(err.Error())
 	}
 
-	return ConsulClient{
+	return Client{
 		client: client,
 	}
 }
 
-// Consul客户端
-type ConsulClient struct {
+// Client Consul客户端
+type Client struct {
 	client *consulApi.Client
 }
 
-// 注册服务
-func (c ConsulClient) RegisterService(serviceId string) error {
+// RegisterService 注册服务
+func (c Client) RegisterService(serviceID string) error {
 	// 读取配置
 	var cfg config.ServiceCenter
 	if err := config.Config().UnmarshalKey("app.serviceCenter", &cfg); err != nil {
@@ -55,7 +56,7 @@ func (c ConsulClient) RegisterService(serviceId string) error {
 
 	reg := &consulApi.AgentServiceRegistration{
 		// 服务ID
-		ID: serviceId,
+		ID: serviceID,
 		// 服务名称
 		Name: serviceName,
 		// 服务地址
@@ -131,15 +132,23 @@ func (c ConsulClient) RegisterService(serviceId string) error {
 	return c.client.Agent().ServiceRegister(reg)
 }
 
-// 服务注销
-func (c ConsulClient) DeregisterService(serviceId string) error {
-	return c.client.Agent().ServiceDeregister(serviceId)
+// DeregisterService 服务注销
+func (c Client) DeregisterService(serviceID string) error {
+	return c.client.Agent().ServiceDeregister(serviceID)
 }
 
-// 服务发现
-//func (c ConsulClient) DiscoverService(service, tag string, passingOnly bool, query *consulApi.QueryOptions) ([]string, error) {
-//	servers, metainfo, err := c.client.Health().Service(service, tag, passingOnly, query)
-//	if err != nil {
-//		return nil, err
-//	}
-//}
+// DiscoverService 服务发现
+func (c Client) DiscoverService(service, tag string, passingOnly bool, query *consulApi.QueryOptions) ([]string, error) {
+	services, metainfo, err := c.client.Health().Service(service, tag, passingOnly, query)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Printf("=== %v", metainfo)
+
+	for _, service := range services {
+		log.Printf("====== service: %v", service)
+	}
+
+	return nil, nil
+}
