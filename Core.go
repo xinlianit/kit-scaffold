@@ -204,9 +204,8 @@ func RunGatewayServer(handler http.Handler) {
 		// 是否注册服务
 		if config.AppConfig.ServiceCenter.Register.Enable {
 			// 服务注册ID
-			serviceGatewayRegisterID = fmt.Sprintf("%s-%s-%s-%d",
+			serviceGatewayRegisterID = fmt.Sprintf("%s-%s-%d",
 				config.AppConfig.Id,
-				"gateway",
 				util.ServerUtil().GetServerIp(),
 				config.Config().GetInt("server.gateway.port"),
 			)
@@ -233,7 +232,7 @@ func RunGatewayServer(handler http.Handler) {
 					// 服务ID
 					ID: serviceGatewayRegisterID,
 					// 服务名称
-					Name: serviceName + "-gateway",
+					Name: serviceName,
 					// 服务地址
 					Address: util.ServerUtil().GetServerIp(),
 					// 服务端口
@@ -241,15 +240,7 @@ func RunGatewayServer(handler http.Handler) {
 				}
 
 				// 服务标签
-				if serviceCenterCfg.Register.Tags != nil {
-					var newTags []string
-
-					for _, tagItem := range serviceCenterCfg.Register.Tags {
-						newTags = append(newTags, tagItem + "-gateway")
-					}
-
-					reg.Tags = newTags
-				}
+				reg.Tags = append(serviceCenterCfg.Register.Tags, "http")
 
 				// 服务健康检查
 				if serviceCenterCfg.HealthCheck.Enable {

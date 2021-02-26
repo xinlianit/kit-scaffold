@@ -1,10 +1,14 @@
 package service
 
-import "github.com/xinlianit/kit-scaffold/examples/http/repository/entity"
+import (
+	"github.com/xinlianit/kit-scaffold/examples/http/repository/entity"
+)
 
+// IndexService index
 type IndexService struct {
 }
 
+// Hello hello
 func (s IndexService) Hello(id int64) (entity.HelloEntity, error) {
 	helloEntity := entity.HelloEntity{}
 

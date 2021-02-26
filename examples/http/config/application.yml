@@ -35,7 +35,7 @@ app:
     # 健康检测
     healthCheck:
       # 是否启用健康检查；true-是、false-否
-      enable: true
+      enable: false
       # 检查类型; http、grpc、tcp
       type: http
       # 检测ID

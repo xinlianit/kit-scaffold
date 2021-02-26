@@ -6,7 +6,6 @@ import (
 	"github.com/xinlianit/go-util"
 	"github.com/xinlianit/kit-scaffold/config"
 	"github.com/xinlianit/kit-scaffold/logger"
-	"log"
 	"time"
 )
 
@@ -138,17 +137,11 @@ func (c Client) DeregisterService(serviceID string) error {
 }
 
 // DiscoverService 服务发现
-func (c Client) DiscoverService(service, tag string, passingOnly bool, query *consulApi.QueryOptions) ([]string, error) {
-	services, metainfo, err := c.client.Health().Service(service, tag, passingOnly, query)
+func (c Client) DiscoverService(service, tag string, passingOnly bool, query *consulApi.QueryOptions) ([]*consulApi.ServiceEntry, error) {
+	services, _, err := c.client.Health().Service(service, tag, passingOnly, query)
 	if err != nil {
 		return nil, err
 	}
 
-	log.Printf("=== %v", metainfo)
-
-	for _, service := range services {
-		log.Printf("====== service: %v", service)
-	}
-
-	return nil, nil
+	return services, nil
 }
