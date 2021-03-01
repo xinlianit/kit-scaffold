@@ -11,9 +11,6 @@ import (
 
 // 认证拦截器
 func AuthInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error){
-	// 处理请求前
-	log.Printf("[before] 认证拦截器, info: %+v", info)
-
 	// 请求认证
 	if err := auth(ctx); err != nil {
 		// 认证不通过返回错误
@@ -23,8 +20,6 @@ func AuthInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServe
 	// 处理请求
 	resp, err := handler(ctx, req)
 
-	// 处理请求后
-	log.Printf("[after] 认证拦截器, resp: %+v", resp)
 	return resp, err
 }
 
