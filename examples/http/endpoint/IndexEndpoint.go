@@ -10,6 +10,11 @@ import (
 	"time"
 )
 
+type IIndexEndpoint interface {
+	Hello(ctx context.Context, request interface{}) (response interface{}, err error)
+	Test(ctx context.Context, request interface{}) (response interface{}, err error)
+}
+
 type IndexEndpoint struct {
 	indexService service.IndexService
 }

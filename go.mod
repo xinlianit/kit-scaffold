@@ -16,6 +16,7 @@ require (
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
 	github.com/miekg/dns v1.1.27 // indirect
 	github.com/nacos-group/nacos-sdk-go v1.0.3
+	github.com/prometheus/client_golang v1.3.0
 	github.com/sirupsen/logrus v1.7.0
 	github.com/spf13/pflag v1.0.3
 	github.com/spf13/viper v1.7.1
