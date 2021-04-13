@@ -7,7 +7,6 @@ import (
 	rsp "github.com/xinlianit/kit-scaffold/examples/http/repository/response"
 	"github.com/xinlianit/kit-scaffold/examples/http/service"
 	"log"
-	"time"
 )
 
 type IIndexEndpoint interface {
@@ -52,15 +51,13 @@ func (e IndexEndpoint) Test(ctx context.Context, request interface{}) (response 
 	helloReq := request.(req.HelloRequest)
 
 	// 调用服务
-	helloEntity, _ := e.indexService.Hello(helloReq.GetId())
+	//helloEntity, _ := e.indexService.Hello(helloReq.GetId())
 
 	// 返回响应
 	response = rsp.HelloResponse{
-		Id:   helloEntity.GetId(),
-		Name: helloEntity.GetName(),
+		Id:   helloReq.GetId(),
+		Name: helloReq.GetMessage(),
 	}
-
-	time.Sleep(time.Second * 3)
 
 	return response, nil
 }
