@@ -1,0 +1,20 @@
+# 版本号
+version: v1.0.0
+# 工程配置
+project:
+  # 工程结构
+  struct:
+    - app
+    - app/server
+    - app/transport
+    - app/endpoint
+    - app/service
+    - app/repository
+    - app/repository/model
+    - app/repository/dao
+    - app/repository/entity
+    - app/commom
+    - app/interceptor
+    - app/middleware
+    - boot
+    - config
