@@ -486,6 +486,8 @@ github.com/xdg/stringprep v1.0.0/go.mod h1:Jhud4/sHMO4oL310DaZAKk9ZaJ08SJfe+sJh0
 github.com/xiang90/probing v0.0.0-20190116061207-43a291ad63a2/go.mod h1:UETIi67q53MR2AWcXfiuqkDkRtnGDLqkBTpCHuJHxtU=
 github.com/xinlianit/go-util v1.0.0-2021021702 h1:KDd6OBLKcPd9A+HXw3hN1tWetlFdV+uoyuZvD2+82Kw=
 github.com/xinlianit/go-util v1.0.0-2021021702/go.mod h1:TuuAz0KMZfiOw52j3vBKe5ECeDI347wXH2IiNloquzo=
+github.com/xinlianit/go-util v1.0.0-2021071301 h1:bXoHkW7H+DTf1zGwrBnn/0aHZB4ihnY/1iYKYPFrZFY=
+github.com/xinlianit/go-util v1.0.0-2021071301/go.mod h1:TuuAz0KMZfiOw52j3vBKe5ECeDI347wXH2IiNloquzo=
 github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 go.etcd.io/bbolt v1.3.2/go.mod h1:IbVyRI1SCnLcuJnV2u8VeU0CEYM7e686BmAb1XKL+uU=
 go.etcd.io/bbolt v1.3.3/go.mod h1:IbVyRI1SCnLcuJnV2u8VeU0CEYM7e686BmAb1XKL+uU=

@@ -79,7 +79,7 @@ func InitDynamicConfig() {
 	}
 
 	// 备份配置
-	if err := util.FileUtil().CopyDirWithFix(dynamicConfigDir, configBackupDir, configBackupPrefix); err != nil {
+	if err := util.DirUtil().CopyDirWithFix(dynamicConfigDir, configBackupDir, configBackupPrefix); err != nil {
 		panic(err)
 	}
 
@@ -125,8 +125,8 @@ func initDefaultConfig(viperConfig *viper.Viper, defaultConfig map[string]interf
 // @param loadChildDir 是否加载子目录配置: true-是、false-否
 // @param watchEnable 是否监听配置变化
 func loadDirAllConfig(config *viper.Viper, configDir string, loadChildDir bool, watchEnable bool) error {
-	// 列出目录文件列表s
-	fileList, err := util.FileUtil().LsDir(configDir, loadChildDir)
+	// 列出目录文件列表
+	fileList, err := util.DirUtil().LsDir(configDir, loadChildDir)
 	if err != nil {
 		return err
 	}

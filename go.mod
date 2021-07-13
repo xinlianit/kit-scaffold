@@ -24,7 +24,7 @@ require (
 	github.com/spf13/cobra v1.1.3
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.7.1
-	github.com/xinlianit/go-util v1.0.0-2021021702
+	github.com/xinlianit/go-util v1.0.0-2021071301
 	go.uber.org/zap v1.16.0
 	golang.org/x/lint v0.0.0-20201208152925-83fdc39ff7b5 // indirect
 	golang.org/x/tools v0.1.0 // indirect
@@ -32,4 +32,9 @@ require (
 	google.golang.org/grpc v1.34.0
 	google.golang.org/protobuf v1.25.0
 	gopkg.in/guregu/null.v4 v4.0.0 // indirect
+)
+
+replace (
+	// 工具包
+	github.com/xinlianit/go-util => github.com/xinlianit/go-util v1.0.0-2021071301
 )

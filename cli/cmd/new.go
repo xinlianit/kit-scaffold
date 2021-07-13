@@ -19,8 +19,8 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/xinlianit/go-util"
 	"github.com/xinlianit/kit-scaffold/cli/common"
-	"github.com/xinlianit/kit-scaffold/cli/util"
 	"strings"
 )
 
