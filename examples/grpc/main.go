@@ -14,7 +14,7 @@ func main() {
 	boot.Init()
 
 	// 启动网关服务
-	go gateway()
+	//go gateway()
 
 	// 拦截器
 	interceptors := interceptor.DefaultUnaryServerInterceptor()

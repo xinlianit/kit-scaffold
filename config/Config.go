@@ -5,7 +5,7 @@ import (
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
 	"github.com/xinlianit/go-util"
-	"github.com/xinlianit/kit-scaffold/common"
+	"github.com/xinlianit/kit-scaffold/app"
 	"github.com/xinlianit/kit-scaffold/common/constant"
 	"path"
 	"path/filepath"
@@ -16,7 +16,6 @@ var (
 	once               sync.Once
 	config             *viper.Viper             // 应用静态配置（运行时不可修改）
 	dynamicConfig      *viper.Viper             // 应用动态配置（运行时可修改，如：通过配置中心修改）
-	configDir          = common.GetConfigPath() // 配置目录
 	dynamicConfigDir   string                   // 动态配置目录
 	configBackupDir    string                   // 动态配置备份目录
 	configBackupPrefix string                   // 动态配置备份前缀
@@ -49,7 +48,7 @@ func initConfig() {
 	config.AutomaticEnv()
 
 	// 加载配置文件
-	if err := loadDirAllConfig(config, configDir, true, false); err != nil {
+	if err := loadDirAllConfig(config, app.ConfigPath, true, false); err != nil {
 		panic(err)
 	}
 

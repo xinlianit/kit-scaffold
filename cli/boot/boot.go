@@ -1,8 +1,8 @@
 package boot
 
 import (
+	"github.com/xinlianit/go-util"
 	"github.com/xinlianit/kit-scaffold/cli/common"
-	"github.com/xinlianit/kit-scaffold/cli/util"
 	"path/filepath"
 )
 

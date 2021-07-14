@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/xinlianit/kit-scaffold/common"
+	"github.com/xinlianit/kit-scaffold/app"
 	"github.com/xinlianit/kit-scaffold/common/constant"
 	"path/filepath"
 	"strings"
@@ -38,8 +38,8 @@ func init() {
 	Default["logger.recordLineNumber"] = false                              // 是否记录行号; true-是、false-否
 	Default["logger.logFormatter"] = "text"                                 // 日志格式; text-文本格式、json-JSON格式
 	Default["logger.maxAge"] = 30                                           // 保留旧文件的最大天数
-	Default["logger.runtimeLogFile"] = common.GetLogPath() + "/runtime.log" // 应用运行日志文件
-	Default["logger.errorLogFile"] = common.GetLogPath() + "/error.log"     // 错误日志文件
+	Default["logger.runtimeLogFile"] = app.RuntimePath + "/runtime.log" 	// 应用运行日志文件
+	Default["logger.errorLogFile"] = app.LogPath + "/error.log"     		// 错误日志文件
 	Default["logger.rotate.enable"] = true                                  // 是否开启日志切割
 	Default["logger.rotate.type"] = "date"                                  // 日志切割类型; size-按大小切割、date-按日期切割
 	Default["logger.rotate.size.maxSize"] = 10                              // 在进行切割之前，日志文件的最大大小（以MB为单位)
@@ -47,14 +47,14 @@ func init() {
 	Default["logger.rotate.size.compress"] = true                           // 是否压缩/归档旧文件
 	Default["logger.rotate.date.extend"] = ".%Y%m%d"                        // 切割后缀
 	Default["logger.access.enable"] = true                                  // 访问日志记录：true-开启、false-关闭
-	Default["logger.access.logFile"] = common.GetLogPath() + "/access.log"  // 访问日志文件
+	Default["logger.access.logFile"] = app.LogPath + "/access.log"  // 访问日志文件
 	Default["logger.rpc.enable"] = true                                     // RPC调用日志记录：true-开启、false-关闭s
-	Default["logger.rpc.logFile"] = common.GetLogPath() + "/rpc.log"        // RPC 调用日志
+	Default["logger.rpc.logFile"] = app.LogPath + "/rpc.log"        // RPC 调用日志
 
 	// 配置中心
 	Default["app.configCenter.enable"] = false                                                  // 是否启用配置中心; true-启用、false-关闭
 	Default["app.configCenter.type"] = "nacos"                                                  // 配置中心类型
-	Default["app.configCenter.configCacheDir"] = filepath.Join(common.GetCachePath(), "config") // 动态配置缓存目录
+	Default["app.configCenter.configCacheDir"] = filepath.Join(app.CachePath, "config") // 动态配置缓存目录
 
 	// 服务中心
 	Default["app.serviceCenter.register.enable"] = false                      // 是否注册服务; true-是、false-否

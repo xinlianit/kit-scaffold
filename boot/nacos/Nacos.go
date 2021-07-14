@@ -153,7 +153,7 @@ func getConfigToFile(group string, dataId string) {
 
 	// 配置目录检测
 	if !util.FileUtil().FileExist(configSyncDir) {
-		if err := util.FileUtil().CreateDir(configSyncDir, true); err != nil {
+		if err := util.DirUtil().CreateDir(configSyncDir, true); err != nil {
 			logger.ZapLogger.Error(err.Error())
 			panic(err)
 		}
@@ -206,7 +206,7 @@ func syncConfigToFile(namespace string, group string, dataId string, data string
 
 	// 目录检测
 	if !util.FileUtil().FileExist(configSyncDir) {
-		if err := util.FileUtil().CreateDir(configSyncDir, true); err != nil {
+		if err := util.DirUtil().CreateDir(configSyncDir, true); err != nil {
 			logger.ZapLogger.Error(err.Error())
 			return
 		}

@@ -29,7 +29,7 @@ app:
     # 服务注册
     register:
       # 是否注册服务; true-是、false-否
-      enable: true
+      enable: false
       # 服务名称
       name: kit-scaffold.palm.grpc.api
       # 服务标签
