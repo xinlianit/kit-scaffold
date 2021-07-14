@@ -29,6 +29,7 @@ var (
  	wg sync.WaitGroup
 )
 
+// Init 脚手架初始化
 func Init() {
 	// 框架初始化
 	boot.Init()
@@ -119,9 +120,6 @@ func RunHTTPServer(handler http.Handler) {
 func RunRPCServer(grpcServer *grpc.Server) {
 	// 命令行参数解析
 	CommandLineParse()
-
-	// 初始化
-	Init()
 
 	// 配置中心初始化
 	boot.ConfigCenterInit()

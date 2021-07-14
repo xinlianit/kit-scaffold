@@ -15,7 +15,7 @@ import (
 	"strings"
 )
 
-// 初始化
+// Init 初始化
 func Init() {
 	// 获取当前执行路径
 	app.RootPath = getCurrentPathByExecutable()
@@ -96,7 +96,7 @@ func getCurrentPathByExecutable() string {
 // @return string 当前文件绝对路径
 func getCurrentPathByCaller() string {
 	var runPath string
-	_, file, _, ok := runtime.Caller(4)
+	_, file, _, ok := runtime.Caller(3)
 	if ok {
 		runPath = path.Dir(file)
 	}

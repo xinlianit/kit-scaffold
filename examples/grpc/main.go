@@ -10,11 +10,14 @@ import (
 )
 
 func main() {
+	// 初始化脚手架
+	scaffold.Init()
+
 	// 启动初始化
 	boot.Init()
 
 	// 启动网关服务
-	//go gateway()
+	go gateway()
 
 	// 拦截器
 	interceptors := interceptor.DefaultUnaryServerInterceptor()
