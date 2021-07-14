@@ -89,7 +89,7 @@ func getCurrentPathByExecutable() string {
 		return ""
 	}
 
-	return path.Dir(realPath)
+	return path.Dir(path.Dir(realPath))
 }
 
 // getCurrentPathByCaller 获取当前绝路径 - 通过运行路径
