@@ -32,9 +32,9 @@ require (
 	google.golang.org/grpc v1.34.0
 	google.golang.org/protobuf v1.25.0
 	gopkg.in/guregu/null.v4 v4.0.0 // indirect
+	gorm.io/driver/mysql v1.1.1
+	gorm.io/gorm v1.21.9
 )
 
-replace (
-	// 工具包
-	github.com/xinlianit/go-util => github.com/xinlianit/go-util v1.0.0-2021071301
-)
+// 工具包
+replace github.com/xinlianit/go-util => github.com/xinlianit/go-util v1.0.0-2021071301

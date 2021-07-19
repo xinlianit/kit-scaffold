@@ -1,22 +1,33 @@
 package dao
 
 import (
+	"github.com/xinlianit/kit-scaffold/examples/grpc/app/repository/column"
 	"github.com/xinlianit/kit-scaffold/examples/grpc/app/repository/entity"
+	"github.com/xinlianit/kit-scaffold/lib/driver"
 )
 
 // 商家数据访问
 type BusinessDao struct {
-	businessEntity entity.BusinessEntity
 }
 
 // 获取商家 - 通过商家ID
-func (d BusinessDao) GetBusinessById(businessId int32) entity.BusinessEntity {
+func (d *BusinessDao) GetBusinessById(businessId int32) (business entity.BusinessEntity) {
+	// 查询字段
+	columns := []string{
+		column.BusinessColumn.BusinessId,
+		column.BusinessColumn.BusinessName,
+	}
 
-	//return d.businessEntity
+	// 查询条件
+	conditions := &entity.BusinessEntity{
+		BusinessId: businessId,
+	}
 
-	// todo 数据库查询
-	d.businessEntity.BusinessId = 100
-	d.businessEntity.BusinessName = "test_business==="
+	// 查询数据
+	driver.MysqlDB.Select(columns).Where(conditions).First(&business)
 
-	return d.businessEntity
+	//business.BusinessId = 100
+	//business.BusinessName = "test_business==="
+
+	return
 }

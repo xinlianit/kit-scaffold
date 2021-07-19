@@ -1,0 +1,47 @@
+# 日志
+logger:
+  # 最低记录日志级别; debug、info、warn、error、panic、fatal（级别从低到高）
+  lowestLevel: debug
+  # 是否记录行号; true-是、false-否
+  recordLineNumber: false
+  # 日志格式; text-文本格式、json-JSON格式
+  logFormatter: text
+  # 应用运行日志文件
+  runtimeLogFile:  logs/kit-scaffold.palm.grpc.api-runtime.log
+  # 错误日志文件
+  errorLogFile: logs/kit-scaffold.palm.grpc.api-error.log
+  # 保留旧文件的最大天数
+  maxAge: 30
+
+  # 日志切割
+  rotate:
+    # 是否开启日志切割
+    enable: true
+    # 日志切割类型; size-按大小切割、date-按日期切割
+    type: date
+    # 大小切割
+    size:
+      # 在进行切割之前，日志文件的最大大小（以MB为单位)
+      maxSize: 10
+      # 保留旧文件的最大个数
+      maxBackups: 100
+      # 是否压缩/归档旧文件
+      compress: true
+    # 日期切割
+    date:
+      # 切割后缀
+      extend: .%Y%m%d
+
+  # 访问日志
+  access:
+    # 访问日志记录：true-开启、false-关闭
+    enable: true
+    # 访问日志文件
+    logFile: logs/kit-scaffold.palm.grpc.api-access.log
+
+  # RPC日志
+  rpc:
+    # RPC日志记录：true-开启、false-关闭
+    enable: true
+    # RPC日志文件
+    rpcLogFile: logs/kit-scaffold.palm.grpc.api-rpc.log

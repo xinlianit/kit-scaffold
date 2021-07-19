@@ -1,0 +1,91 @@
+# 应用配置
+app:
+  # 应用ID
+  id: kit-scaffold.palm.grpc.api
+  # 应用名称
+  name: Go-kit 脚手架 - http示例
+
+  # 配置中心
+  configCenter:
+    # 是否启用配置中心; true-启用、false-关闭
+    enable: true
+    # 配置中心类型; nacos
+    type: nacos
+    # 同步配置文件列表
+    syncConfigDataIds: application.yml,datasource.yml,mail.yml
+    # nacos 分组
+    #nacosGroup: DEV
+    # 动态配置缓存目录
+    configCacheDir: runtime/cache/config
+
+  # 服务中心
+  serviceCenter:
+    # 服务中心类型: consul、etcd、nacos
+    type: consul
+    # consul 配置
+    consul:
+      # 服务中心地址, 多个用英文逗号","隔开
+      address: 39.100.153.72:8500
+    # 服务注册
+    register:
+      # 是否注册服务; true-是、false-否
+      enable: true
+      # 服务名称
+      name: kit-scaffold.palm.grpc.api
+      # 服务标签
+      tags: [kit-scaffold]
+    # 健康检测
+    healthCheck:
+      # 是否启用健康检查；true-是、false-否
+      enable: true
+      # 检查类型; http、grpc、tcp
+      type: grpc
+      # 检测ID
+      #id:
+      # 检测名称
+      #name:
+      # 检测间隔（单位：毫秒）
+      interval: 3000
+      # 检查超时（单位：毫秒）
+      timeout: 1000
+      # 最大生存周期（单位：毫秒）
+      maxLifeTime: 60000
+      # 请求协议
+      protocol: http
+      # 健康检测路径
+      #path:
+      # 健康检测地址
+      address: 39.100.153.72:21000
+      # http 检测
+      http:
+        # 关闭tls验证
+        tlsSkipVerify: true
+        # 请求协议
+        method: GET
+      # gRPC 检测
+      grpc:
+        # TLS
+        tls:
+          # 是否启用 TLS
+          enable: false
+
+      # gateway 检测
+      gateway:
+        # 检查项名称
+        #name: gateway 网关服务健康状态检测
+        # 检测间隔（单位：毫秒）
+        interval: 3000
+        # 检查超时（单位：毫秒）
+        timeout: 1000
+        # 请求方式
+        method: GET
+        # 最大生存周期（单位：毫秒）
+        maxLifeTime: 60000
+        # 请求协议
+        protocol: http
+        # 健康检测路径
+        path: health
+        # 健康检查地址
+        address: http://39.100.153.72:21001/health
+
+

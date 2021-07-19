@@ -3,7 +3,7 @@ nacos:
   # 客户端配置
   clientConfig:
     # 命名空间ID
-    namespaceId: f966e5d2-c610-45fb-ad5c-0e10f7f42fe6
+    namespaceId: c296c59f-cb8f-4c69-8d8b-a6b830f203b0
     # 请求Nacos服务端超时时间; 默认:10000 ms
     timeout: 5000
     # 获取Nacos服务列表endpoint地址

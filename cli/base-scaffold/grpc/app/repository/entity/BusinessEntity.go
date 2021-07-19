@@ -1,18 +1,14 @@
 package entity
 
-// BusinessEntity 商家实体
+// 商家实体
 type BusinessEntity struct {
 	entity
-	BusinessId      int32  `gorm:"primaryKey;autoIncrement" json:"business_id"`      // 商家ID
+	BusinessId      int32  `json:"business_id"`      // 商家ID
 	BusinessName    string `json:"business_name"`    // 商家名称
 	Contacts        string `json:"contacts"`         // 联系人
 	Mobile          string `json:"mobile"`           // 手机号
 	Address         string `json:"address"`          // 商家地址
 	BusinessLicense string `json:"business_license"` // 营业执照
-}
-
-func (e BusinessEntity) TableName() string {
-	return "t_business"
 }
 
 func (e BusinessEntity) GetBusinessId() int32 {
