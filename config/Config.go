@@ -27,32 +27,32 @@ var (
 // 配置初始化
 func Init() {
 	once.Do(func() {
+		// 动态配置目录
+		dynamicConfigDir = Config().GetString("app.configCenter.configCacheDir")
+		// 动态配置备份目录
+		configBackupDir = dynamicConfigDir + "-backup"
+		// 动态配置备份前缀
+		configBackupPrefix = "backup-"
+
+		// 配置目录初始化
+		if !util.DirUtil().IsDir(dynamicConfigDir) {
+			if err := util.DirUtil().CreateDir(dynamicConfigDir, true); err != nil {
+				panic(err)
+			}
+		}
+		if !util.DirUtil().IsDir(configBackupDir) {
+			if err := util.DirUtil().CreateDir(configBackupDir, true); err != nil {
+				panic(err)
+			}
+		}
+
 		// 初始化静态配置
 		initConfig()
 	})
-
-	// 动态配置目录
-	dynamicConfigDir = Config().GetString("app.configCenter.configCacheDir")
-	// 动态配置备份目录
-	configBackupDir = dynamicConfigDir + "-backup"
-	// 动态配置备份前缀
-	configBackupPrefix = "backup-"
 }
 
 // 静态配置
 func initConfig() {
-	// 配置目录初始化
-	if !util.DirUtil().IsDir(dynamicConfigDir) {
-		if err := util.DirUtil().CreateDir(dynamicConfigDir, true); err != nil {
-			panic(err)
-		}
-	}
-	if !util.DirUtil().IsDir(configBackupDir) {
-		if err := util.DirUtil().CreateDir(configBackupDir, true); err != nil {
-			panic(err)
-		}
-	}
-
 	// 创建配置
 	config = viper.New()
 
