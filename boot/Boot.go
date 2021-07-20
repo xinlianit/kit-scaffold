@@ -1,6 +1,7 @@
 package boot
 
 import (
+	"github.com/xinlianit/go-util"
 	"github.com/xinlianit/kit-scaffold/app"
 	"github.com/xinlianit/kit-scaffold/boot/nacos"
 	"github.com/xinlianit/kit-scaffold/common/constant"
@@ -31,7 +32,21 @@ func Init() {
 	app.LogPath = app.RootPath + "/logs"
 	app.RuntimePath = app.RootPath + "/runtime"
 	app.ResourcePath = app.RootPath + "/resource"
-	app.CachePath = app.RootPath + "/cache"
+	app.CachePath = app.RuntimePath + "/cache"
+
+	// 创建运行目录
+	if !util.DirUtil().IsDir(app.RuntimePath) {
+		if err := util.DirUtil().CreateDir(app.RuntimePath, true); err != nil {
+			panic(err)
+		}
+	}
+
+	// 创建运行缓存目录
+	if !util.DirUtil().IsDir(app.CachePath) {
+		if err := util.DirUtil().CreateDir(app.CachePath, true); err != nil {
+			panic(err)
+		}
+	}
 
 	// 配置初始化
 	config.Init()

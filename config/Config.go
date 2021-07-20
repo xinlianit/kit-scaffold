@@ -41,6 +41,18 @@ func Init() {
 
 // 静态配置
 func initConfig() {
+	// 配置目录初始化
+	if !util.DirUtil().IsDir(dynamicConfigDir) {
+		if err := util.DirUtil().CreateDir(dynamicConfigDir, true); err != nil {
+			panic(err)
+		}
+	}
+	if !util.DirUtil().IsDir(configBackupDir) {
+		if err := util.DirUtil().CreateDir(configBackupDir, true); err != nil {
+			panic(err)
+		}
+	}
+
 	// 创建配置
 	config = viper.New()
 
