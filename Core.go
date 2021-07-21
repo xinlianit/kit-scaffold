@@ -36,9 +36,15 @@ func Init() {
 
 	// 命令行初始化
 	commandLineInit()
+
+	// 命令行参数解析
+	CommandLineParse()
+
+	// 配置中心初始化
+	boot.ConfigCenterInit()
 }
 
-// 命令行初始化
+// commandLineInit 命令行初始化
 func commandLineInit() {
 	// 命令行参数
 	pflag.String("env", "PRD","环境名称")
@@ -63,12 +69,6 @@ func CommandLineParse()  {
 // RunHTTPServer 运行 Http 服务
 // @param handler http 处理器
 func RunHTTPServer(handler http.Handler) {
-	// 命令行参数解析
-	CommandLineParse()
-
-	// 配置中心初始化
-	boot.ConfigCenterInit()
-
 	// 服务监听地址
 	listenAddress := fmt.Sprintf("%s:%d", config.Config().GetString("server.host"), config.Config().GetInt("server.port"))
 
@@ -118,12 +118,6 @@ func RunHTTPServer(handler http.Handler) {
 
 // RunRPCServer 运行 gRPC 服务
 func RunRPCServer(grpcServer *grpc.Server) {
-	// 命令行参数解析
-	CommandLineParse()
-
-	// 配置中心初始化
-	boot.ConfigCenterInit()
-
 	// 服务监听地址
 	listenAddress := fmt.Sprintf("%s:%d", config.Config().GetString("server.host"), config.Config().GetInt("server.port"))
 
@@ -181,9 +175,6 @@ func RunRPCServer(grpcServer *grpc.Server) {
 func RunGatewayServer(handler http.Handler) {
 	// 增加等待计数器
 	wg.Add(1)
-
-	// 命令行参数解析
-	CommandLineParse()
 
 	// 网关监听地址
 	gatewayListenAddress := fmt.Sprintf("%s:%d",
@@ -299,7 +290,7 @@ func RunGatewayServer(handler http.Handler) {
 	gatewayServerGraceStop(httpServer)
 }
 
-// HTTP 服务停止
+// httpServerGraceStop HTTP 服务停止
 // @param server http 服务实例
 func httpServerGraceStop(server *http.Server) {
 	// 信号通道
@@ -333,7 +324,7 @@ func httpServerGraceStop(server *http.Server) {
 	logger.ZapLogger.Info("Http Server exiting")
 }
 
-// RPC 服务停止
+// gRPCServerGraceStop RPC 服务停止
 // @param server gRPC 服务实例
 func gRPCServerGraceStop(server *grpc.Server) {
 	// 信号通道
@@ -366,7 +357,7 @@ func gRPCServerGraceStop(server *grpc.Server) {
 	wg.Wait()
 }
 
-// gateway 服务停止
+// gatewayServerGraceStop gateway 服务停止
 // @param server http 服务实例
 func gatewayServerGraceStop(server *http.Server) {
 	// 完成退出，减少等待计数器

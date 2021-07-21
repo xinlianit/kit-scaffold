@@ -23,7 +23,7 @@ var (
 	nacosConfig     config.Nacos // Nacos 配置
 )
 
-// 初始化 Nacos
+// Init 初始化 Nacos
 func Init() {
 	once.Do(func() {
 		// 配置同步目录
@@ -124,12 +124,12 @@ func Init() {
 	})
 }
 
-// Nacos 客户端工具
+// NacosClientUtil Nacos 客户端工具
 func NacosClientUtil() *util.Nacos {
 	return nacosClientUtil
 }
 
-// 同步配置
+// ListenSyncConfig 同步配置
 func ListenSyncConfig() {
 	syncDataIds := config.Config().GetString("app.configCenter.syncConfigDataIds")
 	// 同步配置文件列表
@@ -143,7 +143,7 @@ func ListenSyncConfig() {
 	}
 }
 
-// 获取配置到文件
+// getConfigToFile 获取配置到文件
 func getConfigToFile(group string, dataId string) {
 	// 名称空间
 	var namespace string
@@ -188,7 +188,7 @@ func getConfigToFile(group string, dataId string) {
 	logger.ZapLogger.Info(fmt.Sprintf("Nacos 获取并同步: namespace: %v, group: %v, dataId: %v", namespace, group, dataId), fields...)
 }
 
-// 同步配置到文件
+// syncConfigToFile 同步配置到文件
 func syncConfigToFile(namespace string, group string, dataId string, data string) {
 	fields := []zap.Field{
 		zap.String("namespace", namespace),

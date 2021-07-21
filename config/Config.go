@@ -24,7 +24,7 @@ var (
 	AppConfig App // 应用配置
 )
 
-// 配置初始化
+// Init 配置初始化
 func Init() {
 	once.Do(func() {
 		// 初始化静态配置
@@ -51,7 +51,7 @@ func Init() {
 	})
 }
 
-// 静态配置
+// initConfig 静态配置
 func initConfig() {
 	// 创建配置
 	config = viper.New()
@@ -79,7 +79,7 @@ func initConfig() {
 	}
 }
 
-// 动态配置
+// InitDynamicConfig 动态配置
 func InitDynamicConfig() {
 	// 创建配置
 	dynamicConfig = viper.New()
@@ -121,7 +121,7 @@ func InitDynamicConfig() {
 	}()
 }
 
-// 初始化默认配置
+// initDefaultConfig 初始化默认配置
 // @param defaultConfig 默认配置
 func initDefaultConfig(viperConfig *viper.Viper, defaultConfig map[string]interface{}) {
 	for k, v := range defaultConfig {
@@ -130,11 +130,12 @@ func initDefaultConfig(viperConfig *viper.Viper, defaultConfig map[string]interf
 	}
 }
 
-// 加载目录所有配置
+// loadDirAllConfig 加载目录所有配置
 // @param config 配置实例
 // @param configDir 配置目录
 // @param loadChildDir 是否加载子目录配置: true-是、false-否
 // @param watchEnable 是否监听配置变化
+// @param error
 func loadDirAllConfig(config *viper.Viper, configDir string, loadChildDir bool, watchEnable bool) error {
 	// 列出目录文件列表
 	fileList, err := util.DirUtil().LsDir(configDir, loadChildDir)
@@ -176,16 +177,20 @@ func loadDirAllConfig(config *viper.Viper, configDir string, loadChildDir bool, 
 	return nil
 }
 
-// 静态配置
+// Config 静态配置实例
 func Config() *viper.Viper {
 	return config
 }
 
-// 动态配置
+// DynamicConfig 动态配置实例
 func DynamicConfig() *viper.Viper {
 	return dynamicConfig
 }
 
+// GetOrDefault 获取配置，不存在返回默认值
+// @param key 配置键
+// @param defaultValue 默认值
+// @param interface
 func GetOrDefault(key string, defaultValue interface{}) interface{} {
 	value := config.Get(key)
 	if value == nil {
@@ -195,6 +200,10 @@ func GetOrDefault(key string, defaultValue interface{}) interface{} {
 	return value
 }
 
+// GetIntOrDefault 获取 int 配置，不存在返回默认值
+// @param key 配置键
+// @param defaultValue 默认值
+// @param int
 func GetIntOrDefault(key string, defaultValue int) int {
 	value := config.GetInt(key)
 	if value == 0 {
@@ -204,6 +213,10 @@ func GetIntOrDefault(key string, defaultValue int) int {
 	return value
 }
 
+// GetInt32OrDefault 获取 int32 配置，不存在返回默认值
+// @param key 配置键
+// @param defaultValue 默认值
+// @param int32
 func GetInt32OrDefault(key string, defaultValue int32) int32 {
 	value := config.GetInt32(key)
 	if value == 0 {
@@ -213,6 +226,10 @@ func GetInt32OrDefault(key string, defaultValue int32) int32 {
 	return value
 }
 
+// GetInt64OrDefault 获取 int64 配置，不存在返回默认值
+// @param key 配置键
+// @param defaultValue 默认值
+// @param int64
 func GetInt64OrDefault(key string, defaultValue int64) int64 {
 	value := config.GetInt64(key)
 	if value == 0 {
@@ -222,6 +239,10 @@ func GetInt64OrDefault(key string, defaultValue int64) int64 {
 	return value
 }
 
+// GetUintOrDefault 获取 uint 配置，不存在返回默认值
+// @param key 配置键
+// @param defaultValue 默认值
+// @param uint
 func GetUintOrDefault(key string, defaultValue uint) uint {
 	value := config.GetUint(key)
 	if value == 0 {
@@ -231,6 +252,10 @@ func GetUintOrDefault(key string, defaultValue uint) uint {
 	return value
 }
 
+// GetUint32OrDefault 获取 uint32 配置，不存在返回默认值
+// @param key 配置键
+// @param defaultValue 默认值
+// @param uint32
 func GetUint32OrDefault(key string, defaultValue uint32) uint32 {
 	value := config.GetUint32(key)
 	if value == 0 {
@@ -240,6 +265,10 @@ func GetUint32OrDefault(key string, defaultValue uint32) uint32 {
 	return value
 }
 
+// GetUint64OrDefault 获取 uint64 配置，不存在返回默认值
+// @param key 配置键
+// @param defaultValue 默认值
+// @param uint64
 func GetUint64OrDefault(key string, defaultValue uint64) uint64 {
 	value := config.GetUint64(key)
 	if value == 0 {
@@ -249,6 +278,10 @@ func GetUint64OrDefault(key string, defaultValue uint64) uint64 {
 	return value
 }
 
+// GetFloat64OrDefault 获取 float64 配置，不存在返回默认值
+// @param key 配置键
+// @param defaultValue 默认值
+// @param float64
 func GetFloat64OrDefault(key string, defaultValue float64) float64 {
 	value := config.GetFloat64(key)
 	if value == 0 {
@@ -258,6 +291,10 @@ func GetFloat64OrDefault(key string, defaultValue float64) float64 {
 	return value
 }
 
+// GetStringOrDefault 获取 string 配置，不存在返回默认值
+// @param key 配置键
+// @param defaultValue 默认值
+// @param string
 func GetStringOrDefault(key string, defaultValue string) string {
 	value := config.GetString(key)
 	if value == "" {
@@ -267,6 +304,10 @@ func GetStringOrDefault(key string, defaultValue string) string {
 	return value
 }
 
+// GetBoolOrDefault 获取 bool 配置，不存在返回默认值
+// @param key 配置键
+// @param defaultValue 默认值
+// @param bool
 func GetBoolOrDefault(key string, defaultValue bool) bool {
 	value := config.GetBool(key)
 	if value == false {
@@ -276,6 +317,10 @@ func GetBoolOrDefault(key string, defaultValue bool) bool {
 	return value
 }
 
+// GetIntSliceOrDefault 获取 []int 配置，不存在返回默认值
+// @param key 配置键
+// @param defaultValue 默认值
+// @param []int
 func GetIntSliceOrDefault(key string, defaultValue []int) []int {
 	value := config.GetIntSlice(key)
 	if len(value) == 0 {
@@ -285,6 +330,10 @@ func GetIntSliceOrDefault(key string, defaultValue []int) []int {
 	return value
 }
 
+// GetStringSliceOrDefault 获取 []string 配置，不存在返回默认值
+// @param key 配置键
+// @param defaultValue 默认值
+// @param []string
 func GetStringSliceOrDefault(key string, defaultValue []string) []string {
 	value := config.GetStringSlice(key)
 	if len(value) == 0 {
