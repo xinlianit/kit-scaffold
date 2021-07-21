@@ -27,6 +27,9 @@ var (
 // 配置初始化
 func Init() {
 	once.Do(func() {
+		// 初始化静态配置
+		initConfig()
+
 		// 动态配置目录
 		dynamicConfigDir = Config().GetString("app.configCenter.configCacheDir")
 		// 动态配置备份目录
@@ -45,9 +48,6 @@ func Init() {
 				panic(err)
 			}
 		}
-
-		// 初始化静态配置
-		initConfig()
 	})
 }
 
