@@ -4,7 +4,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-// 默认一元服务拦截器
+// DefaultUnaryServerInterceptor 默认一元服务拦截器
 func DefaultUnaryServerInterceptor() []grpc.UnaryServerInterceptor {
 	// 拦截器
 	return []grpc.UnaryServerInterceptor{

@@ -8,7 +8,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-// 错误拦截器
+// ErrorInterceptor 错误拦截器
 func ErrorInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
 	// 处理请求
 	resp, err = handler(ctx, req)
