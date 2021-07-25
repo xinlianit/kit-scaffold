@@ -29,12 +29,16 @@ var (
 	serviceRegisterID string
  	serviceGatewayRegisterID string
  	wg sync.WaitGroup
+	pidFile string
 )
 
 // Init 脚手架初始化
 func Init() {
 	// 框架初始化
 	boot.Init()
+
+	// PID 文件
+	pidFile = app.RuntimePath+"/pid"
 
 	// 命令行初始化
 	commandLineInit()
@@ -137,7 +141,6 @@ func RunRPCServer(grpcServer *grpc.Server) {
 	}
 
 	// 服务进程ID
-	pidFile := app.RuntimePath+"/pid"
 	if _, err := util.FileUtil().Write(pidFile, strconv.Itoa(os.Getpid())); err != nil {
 		errMsg := fmt.Sprintf("server pid file write error: %v", err)
 		logger.ZapLogger.Error(errMsg)
@@ -361,6 +364,13 @@ func gRPCServerGraceStop(server *grpc.Server) {
 
 	// 优雅关机
 	server.GracefulStop()
+
+	// 删除PID文件
+	if util.FileUtil().FileExist(pidFile) {
+		if err := os.Remove(pidFile); err != nil {
+			logger.ZapLogger.Sugar().Errorf("pid file remove error: %v", err)
+		}
+	}
 
 	logger.ZapLogger.Info("gRPC server exiting")
 
