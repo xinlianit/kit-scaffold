@@ -6,6 +6,7 @@ import (
 	consulApi "github.com/hashicorp/consul/api"
 	"github.com/spf13/pflag"
 	"github.com/xinlianit/go-util"
+	"github.com/xinlianit/kit-scaffold/app"
 	"github.com/xinlianit/kit-scaffold/boot"
 	"github.com/xinlianit/kit-scaffold/boot/consul"
 	"github.com/xinlianit/kit-scaffold/config"
@@ -16,6 +17,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"sync"
 	"syscall"
 	"time"
@@ -133,6 +135,15 @@ func RunRPCServer(grpcServer *grpc.Server) {
 		logger.ZapLogger.Sugar().Errorf("gRPC server listen error: %v", err)
 		panic("Server listen error: " + err.Error())
 	}
+
+	// 服务进程ID
+	pidFile := app.RuntimePath+"/pid"
+	if _, err := util.FileUtil().Write(pidFile, strconv.Itoa(os.Getpid())); err != nil {
+		errMsg := fmt.Sprintf("server pid file write error: %v", err)
+		logger.ZapLogger.Error(errMsg)
+		panic(errMsg)
+	}
+	logger.ZapLogger.Sugar().Infof("pid file: %v", pidFile)
 
 	// 服务启动成功
 	logger.ZapLogger.Info(fmt.Sprintf("Listening and serving gRPC on %s, PID: %d", listenAddress, os.Getpid()))
