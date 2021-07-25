@@ -13,7 +13,7 @@ type BusinessInfoEndpoint struct {
 	businessInfoService service.BusinessInfoService
 }
 
-// 获取商家详情
+// GetBusinessInfo 获取商家详情
 func (e BusinessInfoEndpoint) GetBusinessInfo() endpoint.Endpoint {
 	return func(ctx context.Context, req interface{}) (rsp interface{}, err error) {
 		// 请求断言

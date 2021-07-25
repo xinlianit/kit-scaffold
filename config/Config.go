@@ -101,16 +101,16 @@ func InitDynamicConfig() {
 	go func() {
 		dynamicConfig.OnConfigChange(func(e fsnotify.Event) {
 			// todo 记录到日志
-			fmt.Printf("[%v] Viper dynamic config changed: %v\n", util.TimeUtil().GetCurrentDateTime(constant.DefaultTimeLayout), e.Name)
+			fmt.Printf("[%v] Viper dynamic config changed: %v\n", util.TimeUtil().GetCurrentDateTime(constant.DateTimeLayout), e.Name)
 
 			if err := loadDirAllConfig(dynamicConfig, dynamicConfigDir, false, false); err != nil {
 				// todo 记录到日志, 邮件告警【重要】
-				fmt.Printf("[%v] Viper dynamic config reload error: %v\n", util.TimeUtil().GetCurrentDateTime(constant.DefaultTimeLayout), err)
+				fmt.Printf("[%v] Viper dynamic config reload error: %v\n", util.TimeUtil().GetCurrentDateTime(constant.DateTimeLayout), err)
 
 				// todo 重载备份配置
 				if err := loadDirAllConfig(dynamicConfig, configBackupDir, false, false); err != nil {
 					// todo 记录到日志, 邮件告警【重要】
-					fmt.Printf("[%v] Viper dynamic backup config reload error: %v\n", util.TimeUtil().GetCurrentDateTime(constant.DefaultTimeLayout), err)
+					fmt.Printf("[%v] Viper dynamic backup config reload error: %v\n", util.TimeUtil().GetCurrentDateTime(constant.DateTimeLayout), err)
 				}
 			} else {
 				// 配置备份

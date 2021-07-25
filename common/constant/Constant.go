@@ -15,6 +15,9 @@ const (
 	ServiceCenterTypeConsul = "consul"
 	ServiceCenterTypeNacos  = "nacos"
 
-	// 默认时间格式
-	DefaultTimeLayout = "2006-01-02 15:04:05"
+	// 时间格式
+	DateLayout = "2006-01-02"
+	TimeLayout = "15:04:05"
+	DateTimeLayout = "2006-01-02 15:04:05"
+	DateTimeMillisecondLayout = "2006-01-02 15:04:05.000"
 )

@@ -10,6 +10,7 @@ import (
 )
 
 // 认证拦截器
+// 客户端添加Token: https://golang2.eddycjy.com/posts/ch3/09-grpc-metadata-creds/
 func AuthInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error){
 	// 请求认证
 	if err := auth(ctx); err != nil {
