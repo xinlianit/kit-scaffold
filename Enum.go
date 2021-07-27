@@ -12,7 +12,7 @@ type EnumType int
 // EnumName 枚举名称
 var EnumName map[EnumType]string
 
-// 包初始化
+// 初始化
 func init() {
 	EnumName = make(map[EnumType]string)
 }

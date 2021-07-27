@@ -4,7 +4,7 @@ import (
 	scaffold "github.com/xinlianit/kit-scaffold"
 )
 
-// 服务异常
+// ServiceException 服务异常
 type ServiceException struct {
 	Exception
 }

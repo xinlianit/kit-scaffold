@@ -16,5 +16,7 @@ func DefaultUnaryServerInterceptor() []grpc.UnaryServerInterceptor {
 		ErrorInterceptor,
 		// 请求取消
 		CancelInterceptor,
+		// 认证拦截器
+		AuthInterceptor,
 	}
 }

@@ -4,8 +4,8 @@ import (
 	"context"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	scaffold "github.com/xinlianit/kit-scaffold"
+	"github.com/xinlianit/kit-scaffold/examples/grpc/app/interceptor"
 	"github.com/xinlianit/kit-scaffold/examples/grpc/boot"
-	"github.com/xinlianit/kit-scaffold/interceptor"
 	"google.golang.org/grpc"
 )
 
@@ -22,15 +22,10 @@ func main() {
 	// 启动网关服务
 	go gateway()
 
-	// 拦截器
-	interceptors := interceptor.DefaultUnaryServerInterceptor()
-	// 凭证认证拦截器
-	//interceptors = append(interceptors, interceptor.AuthInterceptor)
-
 	// 创建 RPC 服务
 	opts := []grpc.ServerOption{
-		// 注册拦截器
-		grpc.ChainUnaryInterceptor(interceptors...),
+		// 注册一元拦截器
+		grpc.ChainUnaryInterceptor(interceptor.UnaryServerInterceptor()...),
 	}
 	rpcServer := grpc.NewServer(opts...)
 
