@@ -96,6 +96,8 @@ func Init() {
 			RotateTime:          nacosConfig.ClientConfig.RotateTime,
 			MaxAge:              nacosConfig.ClientConfig.MaxAge,
 			LogLevel:            nacosConfig.ClientConfig.LogLevel,
+			Username: 			 nacosConfig.ClientConfig.UserName,
+			Password: 			 nacosConfig.ClientConfig.Password,
 		}
 
 		// 配置中心属性
