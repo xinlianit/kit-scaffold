@@ -44,7 +44,8 @@ func InitMySql() {
 	config.DynamicConfig().UnmarshalKey("datasource.mysql", &mysqlConfig)
 
 	// 数据源名称
-	dbDSN := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=%s&parseTime=True&loc=Local&timeout=%ds",
+	// 数据源名称
+	dbDSN := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=%s&parseTime=True&loc=Local&timeout=%dms&readTimeout=%dms&writeTimeout=%dms",
 		mysqlConfig.User,
 		mysqlConfig.Password,
 		mysqlConfig.Host,
@@ -52,6 +53,8 @@ func InitMySql() {
 		mysqlConfig.DatabaseName,
 		mysqlConfig.Charset,
 		mysqlConfig.Timeout,
+		mysqlConfig.ReadTimeout,
+		mysqlConfig.WriteTimeout,
 	)
 
 	// 连接并打开数据库
